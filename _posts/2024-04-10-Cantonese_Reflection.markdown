@@ -1,11 +1,11 @@
 ---
-layout: post
+layout: furigana_post
 title:  "Final Reflections: DMA1401L01 Spoken Cantonese"
 date:   2024-04-10 15:36:58 +0800
 categories: NUS DMA1401L01 Languages Cantonese modreview
 ---
 
-Nei5 Hou2 Maa1? Zeoi3-Gan6 Dim2 aa3? Ngo5 Ming6 Giu3 Wai1-Juk6-Ngau1 (Yuknavell). This is my End-of-Semester reflection for DMA1401L01 Spoken Cantonese. Initially I was Gan2-Zoeng1 (nervous) as I was one of the only non-Chinese while many were of Cantonese roots wanting to pick up their mother tongue. I only have a modest background in mandarin to back me up. 
+[你:Nei5] [好:Hou2] [嗎:Maa1]? Zeoi3-Gan6 Dim2 aa3? Ngo5 Ming6 Giu3 Wai1-Juk6-Ngau1 (Yuknavell). This is my End-of-Semester reflection for DMA1401L01 Spoken Cantonese. Initially I was Gan2-Zoeng1 (nervous) as I was one of the only non-Chinese while many were of Cantonese roots wanting to pick up their mother tongue. I only have a modest background in mandarin to back me up. 
 
 Thankfully the lessons were digestible. I did sit in front, and was able to practice on the spot with classmates beside me. We started from the basics, and Lou Si (Teacher) brought us through the pronunciations and when to use the phrases. We were all made to practice out loud in front of the class. I was unprepared but it was good to practice out loud. Even got a round of applause from the others 😅. Each class finished off with Lou Si singing, while explaining the poetic and strategic use of Cantonese in the lyrics. 
 

@@ -18,8 +18,8 @@ group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.12"
   gem "json"
   gem "jekyll-remote-theme"
-  gem 'jekyll-spaceship'
-  gem 'jekyll-furigana'
+  gem "jekyll-spaceship"
+  gem "jekyll-furigana"
 end
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem
