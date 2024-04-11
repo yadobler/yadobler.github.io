@@ -17,7 +17,7 @@ We learnt some interesting phrases, like **Wan6-Gat1** referring to someone who 
 
 Lastly, the assignments given are definitely unique. We had to do a remix of any Cantonese song, which amazingly is a common occurrence in real life! (A great real-life example, ~~ignoring the ham-sap songs~~ is Anita Mui's **Zik Joeng zi Go** vs Priscilla Chan's **Cin Cin kyut Go**, both from the same Japanese song). My rendition of **Gwong1 Fai1 Seoi3 Jyut6** was rewritten as a tribute to my mother and the trials and tribulations she faced, akin to how Beyond wrote the famous song as a tribute to the struggles of Nelson Mandela. We also had to do an interview, which I did with my classmate Moses, and it was very fun trying to work things out and sound legitimate.
 
-(Cantonese Remix: To be added)
+[Cantonese Song Remix]({% link _posts/2024-02-26-Cantonese_Song_Remix.markdown %})
 
 [Cantonese Interview with Moses](https://www.youtube.com/watch?v=U7M8_q5_MhY)
 
