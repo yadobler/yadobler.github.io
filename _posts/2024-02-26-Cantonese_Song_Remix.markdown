@@ -7,5 +7,5 @@ categories: NUS DMA1401L01 Languages Cantonese Songs Cantopop
 
 Nei5 Hou2!
 
-Firstly, [here is my remix](https://youtu.be/m2CqFGLIeMs).
-![](https://youtu.be/m2CqFGLIeMs)
+Firstly, [here is my remix](https://youtu.be/m2CqFGLIeMs?si=4avCqoyLSvyLV4mA).
+![](https://youtu.be/m2CqFGLIeMs?si=4avCqoyLSvyLV4mA)
