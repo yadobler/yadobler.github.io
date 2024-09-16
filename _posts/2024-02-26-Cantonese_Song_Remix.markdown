@@ -48,8 +48,8 @@ for those who set their mind"
 只怕有心人;
 zi2 paa3 jau5 sam1 jan4;
 
-
-
+    
+    
 Childhood to adulthood, folks never supported
 從小到大人哋未支持;
 cung4 siu2 dou3 daai6 jan4 dei6 mei6 zi1 ci4;
@@ -57,8 +57,8 @@ cung4 siu2 dou3 daai6 jan4 dei6 mei6 zi1 ci4;
 So no matter what she'll support. 
 所以無論點佢會支援;
 so2 ji5 mou4 leon6 dim2 keoi5 wui5 zi1 wun4;
-
-
+    
+    
 
 Mother sows saplings to let her kids, 
 媽媽栽樹讓仔女可以,
@@ -83,8 +83,8 @@ seoi1 jin4 maa5 sei2 lok6 dei6 haang4,
 She will never give up. 
 但佢再接再厲;
 daan6 keoi5 zoi3 zip3 zoi3 lai6;
-
-
+     
+    
 
 Many force her to give up yet she refused, 
 人哋逼佢放棄佢拒絕,
@@ -109,8 +109,8 @@ tin1 zo6 zi6 zo6 ze2,
 Human or not, only one life, 
 人一世物一世.
 jan4 jat1 sai3 mat6 jat1 sai3.
-
-
+    
+    
 
 Childhood to adulthoof, folks never supported
 從小到大人哋未支持;
@@ -143,8 +143,8 @@ seoi1 jin4 maa5 sei2 lok6 dei6 haang4,
 She will never give up. 
 但佢再接再厲;
 daan6 keoi5 zoi3 zip3 zoi3 lai6;
-
-
+    
+    
 
 Mother sows saplings to let her kids, 
 媽媽栽樹讓仔女可以,
@@ -169,8 +169,8 @@ seoi1 jin4 maa5 sei2 lok6 dei6 haang4,
 She will never give up. 
 但佢再接再厲;
 daan6 keoi5 zoi3 zip3 zoi3 lai6;
-
-
+    
+    
 
 Mother sows saplings to let her kids, 
 媽媽栽樹讓仔女可以,
