@@ -20,6 +20,7 @@ group :jekyll_plugins do
   gem "jekyll-remote-theme"
   gem "jekyll-spaceship"
   gem "jekyll-furigana"
+  gem 'jekyll-target-blank'
 end
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem
