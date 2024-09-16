@@ -20,7 +20,7 @@
 
 title: Yukna's blog!
 description: >- # this means to ignore newlines until "baseurl:"
-  I am Yukna'vell / Yuhk Ngau Wai (玉鉤威) - Yadobler
+  I am Yukna'vell - யுக்னவேல் - 威玉鉤 Wai Yuhk Ngau - Oai Ngọc Câu - Yadobler // Computer Science & Linguistics
   This is my blog, where I share things and stuff. 
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "yadobler.github.io" # the base hostname & protocol for your site, e.g. http://example.com
@@ -36,6 +36,7 @@ plugins:
   - jekyll-feed
   - jekyll-remote-theme
   - jekyll-spaceship
+  - jekyll-target-blank
   #  - jekyll-furigana
 
 # Exclude from processing.
