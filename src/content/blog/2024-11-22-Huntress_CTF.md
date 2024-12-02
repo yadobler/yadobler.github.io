@@ -1,8 +1,7 @@
 ---
-layout:     post
-title:      "Huntress CTF 2024"
-date:       2024-11-27
-categories: CTF ComSec CyberSecurity Huntress
+title:          "Huntress CTF 2024"
+pubDate:        2024-11-27
+description:    CTF ComSec CyberSecurity Huntress
 ---
 
 Tuesday, October 1, 2024

@@ -1,8 +1,7 @@
 ---
-layout: post
-title:  "Final Reflections: DMA1401L01 Spoken Cantonese"
-date:   2024-04-10 
-categories: NUS DMA1401L01 Languages Cantonese modreview
+title:          "Final Reflections: DMA1401L01 Spoken Cantonese"
+pubDate:        2024-04-10 
+description:    NUS DMA1401L01 Languages Cantonese modreview
 ---
 
 Nei5 Hou2 Maa1? Zeoi3-Gan6 Dim2 aa3? Ngo5 Ming6 Giu3 Wai1-Juk6-Ngau1 (Yuknavell). This is my End-of-Semester reflection for DMA1401L01 Spoken Cantonese. Initially I was Gan2-Zoeng1 (nervous) as I was one of the only non-Chinese while many were of Cantonese roots wanting to pick up their mother tongue. I only have a modest background in mandarin to back me up. 

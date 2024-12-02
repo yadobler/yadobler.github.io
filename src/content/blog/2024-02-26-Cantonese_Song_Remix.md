@@ -1,8 +1,7 @@
 ---
-layout: post
-title:  "Cantonese Song Remix - DMA1401L01 Spoken Cantonese"
-date:   2024-02-26
-categories: NUS DMA1401L01 Languages Cantonese Songs Cantopop
+title:          "Cantonese Song Remix - DMA1401L01 Spoken Cantonese"
+pubDate:        2024-02-26
+description:    NUS DMA1401L01 Languages Cantonese Songs Cantopop
 ---
 
 Nei5 Hou2!
