@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "Huntress CTF 2024"
-date:       2024-11-27 15:36:58 +0800
+date:       2024-11-27
 categories: CTF ComSec CyberSecurity Huntress
 ---
 

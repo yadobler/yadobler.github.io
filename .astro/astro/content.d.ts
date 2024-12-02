@@ -152,6 +152,27 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"blog": {
+"2024-02-26-Cantonese_Song_Remix.md": {
+	id: "2024-02-26-Cantonese_Song_Remix.md";
+  slug: "2024-02-26-cantonese_song_remix";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"2024-04-10-Cantonese_Reflection.md": {
+	id: "2024-04-10-Cantonese_Reflection.md";
+  slug: "2024-04-10-cantonese_reflection";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"2024-11-22-Huntress_CTF.md": {
+	id: "2024-11-22-Huntress_CTF.md";
+  slug: "2024-11-22-huntress_ctf";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "first-post.md": {
 	id: "first-post.md";
   slug: "first-post";

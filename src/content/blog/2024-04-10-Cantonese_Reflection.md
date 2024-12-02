@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Final Reflections: DMA1401L01 Spoken Cantonese"
-date:   2024-04-10 15:36:58 +0800
+date:   2024-04-10 
 categories: NUS DMA1401L01 Languages Cantonese modreview
 ---
 
