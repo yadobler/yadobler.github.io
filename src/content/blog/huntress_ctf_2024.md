@@ -3,7 +3,6 @@ title:          "Huntress CTF 2024 - Overview"
 pubDate:        2024-11-27
 updatedDate:    2024-12-04
 description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
-heroImage:      "/blog-placeholder-4.jpg"
 ---
 Huntress CTF 2024 was an exhilarating experience, held throughout October in celebration of Cybersecurity Awareness Month. With fresh challenges released daily, it offered a dynamic and engaging way to explore the field of cybersecurity. As my first-ever CTF, it was a manageable yet rewarding dive into topics like reverse engineering and problem-solving. Although designed as a team challenge, I tackled it solo, which made the learning experience even more personal and gratifying.
 

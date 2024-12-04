@@ -7,6 +7,7 @@ description:    NUS DMA1401L01 Languages Cantonese Songs Cantopop
 Nei5 Hou2!
 
 Firstly, [here is my remix](https://youtu.be/m2CqFGLIeMs?si=4avCqoyLSvyLV4mA).
+
 ![](https://youtu.be/m2CqFGLIeMs?si=4avCqoyLSvyLV4mA)
 
 For the assignment, we are supposed to remix a cantonese song with what we like. There are soo many classics to choose from, and I decided on this:
@@ -35,6 +36,8 @@ She loved it. She was proud that I could understand her. She played it on repeat
 
 Here's the lyrics:
 
+
+```text
 Ask: "isn't it tough to continue like this?" She says, 
 問繼續噉唔難咩佢講,
 man6 gai3 zuk6 gam2 m4 naan4 me1 keoi5 gong2, 
@@ -194,3 +197,4 @@ seoi1 jin4 maa5 sei2 lok6 dei6 haang4,
 She will never give up. 
 但佢再接再厲;
 daan6 keoi5 zoi3 zip3 zoi3 lai6;
+```
