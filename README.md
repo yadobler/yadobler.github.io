@@ -1,3 +1,7 @@
+# Acknoledgements
+
+Icons: https://icons8.com/
+
 # Astro Starter Kit: Blog
 
 ```sh

@@ -166,9 +166,184 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
-"2024-11-22-Huntress_CTF.md": {
-	id: "2024-11-22-Huntress_CTF.md";
-  slug: "2024-11-22-huntress_ctf";
+"huntress_ctf_2024.md": {
+	id: "huntress_ctf_2024.md";
+  slug: "huntress_ctf_2024";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/baby_buffer_overflow.md": {
+	id: "huntress_ctf_2024/baby_buffer_overflow.md";
+  slug: "huntress_ctf_2024/baby_buffer_overflow";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/base64by32.md": {
+	id: "huntress_ctf_2024/base64by32.md";
+  slug: "huntress_ctf_2024/base64by32";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/cattle.md": {
+	id: "huntress_ctf_2024/cattle.md";
+  slug: "huntress_ctf_2024/cattle";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/discount_programming_devices.md": {
+	id: "huntress_ctf_2024/discount_programming_devices.md";
+  slug: "huntress_ctf_2024/discount_programming_devices";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/eepy.md": {
+	id: "huntress_ctf_2024/eepy.md";
+  slug: "huntress_ctf_2024/eepy";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/finders_fee.md": {
+	id: "huntress_ctf_2024/finders_fee.md";
+  slug: "huntress_ctf_2024/finders_fee";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/gocrackme1.md": {
+	id: "huntress_ctf_2024/gocrackme1.md";
+  slug: "huntress_ctf_2024/gocrackme1";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/i_cant_ssh.md": {
+	id: "huntress_ctf_2024/i_cant_ssh.md";
+  slug: "huntress_ctf_2024/i_cant_ssh";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/malibu.md": {
+	id: "huntress_ctf_2024/malibu.md";
+  slug: "huntress_ctf_2024/malibu";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/matryoshkaqr.md": {
+	id: "huntress_ctf_2024/matryoshkaqr.md";
+  slug: "huntress_ctf_2024/matryoshkaqr";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/mimi.md": {
+	id: "huntress_ctf_2024/mimi.md";
+  slug: "huntress_ctf_2024/mimi";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/mystery.md": {
+	id: "huntress_ctf_2024/mystery.md";
+  slug: "huntress_ctf_2024/mystery";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/nightmare_on_hunt_street_(bundle).md": {
+	id: "huntress_ctf_2024/nightmare_on_hunt_street_(bundle).md";
+  slug: "huntress_ctf_2024/nightmare_on_hunt_street_bundle";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/no_need_for_brutus.md": {
+	id: "huntress_ctf_2024/no_need_for_brutus.md";
+  slug: "huntress_ctf_2024/no_need_for_brutus";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/ran_somewhere.md": {
+	id: "huntress_ctf_2024/ran_somewhere.md";
+  slug: "huntress_ctf_2024/ran_somewhere";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/red_phish_blue_phish.md": {
+	id: "huntress_ctf_2024/red_phish_blue_phish.md";
+  slug: "huntress_ctf_2024/red_phish_blue_phish";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/russian_roulette.md": {
+	id: "huntress_ctf_2024/russian_roulette.md";
+  slug: "huntress_ctf_2024/russian_roulette";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/strange_calc.md": {
+	id: "huntress_ctf_2024/strange_calc.md";
+  slug: "huntress_ctf_2024/strange_calc";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/the_void.md": {
+	id: "huntress_ctf_2024/the_void.md";
+  slug: "huntress_ctf_2024/the_void";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/too_many_bits.md": {
+	id: "huntress_ctf_2024/too_many_bits.md";
+  slug: "huntress_ctf_2024/too_many_bits";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/txt_message.md": {
+	id: "huntress_ctf_2024/txt_message.md";
+  slug: "huntress_ctf_2024/txt_message";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/typo.md": {
+	id: "huntress_ctf_2024/typo.md";
+  slug: "huntress_ctf_2024/typo";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/unbelievable.md": {
+	id: "huntress_ctf_2024/unbelievable.md";
+  slug: "huntress_ctf_2024/unbelievable";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/whamazon.md": {
+	id: "huntress_ctf_2024/whamazon.md";
+  slug: "huntress_ctf_2024/whamazon";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"huntress_ctf_2024/zimmer_down.md": {
+	id: "huntress_ctf_2024/zimmer_down.md";
+  slug: "huntress_ctf_2024/zimmer_down";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
