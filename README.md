@@ -1,6 +1,9 @@
 # Acknoledgements
 
-Icons: https://icons8.com/
+This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+
+SVG Icons: https://icons8.com/
+
 
 # Astro Starter Kit: Blog
 
@@ -69,4 +72,4 @@ Check out [our documentation](https://docs.astro.build) or jump into our [Discor
 
 ## Credit
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+
