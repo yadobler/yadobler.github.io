@@ -21,7 +21,7 @@ Below is a checklist of the challenges I tackled during the event. Striked-out e
    - [x] [matryoshkaQR](matryoshkaqr)
    - [x] [base64by32](base64by32)
    - [x] [too_many_bits](too_many_bits)
-   - [x] [strange_calc](strange_calc)
+   - [ ] [strange_calc](strange_calc)
 
 ##### Wednesday, October 2, 2024
    - [x] [No Need For Brutus](no_need_for_brutus)

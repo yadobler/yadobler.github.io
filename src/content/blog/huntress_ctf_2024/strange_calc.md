@@ -1,6 +1,7 @@
 ---
 title:          "Strange Calc (Huntress CTF 2024)"
 pubDate:        2024-11-27
+updatedDate:    2024-12-04
 description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
 ---
 
@@ -65,3 +66,4 @@ The _au3_ script merely decodes a base64 string using Windows API, saves it as a
 
 [C code compilable in UNIX systems](https://web.archive.org/web/20140209124110/http://www.virtualconspiracy.com/download/scrdec18.c)
 
+# This is a work in progress, apologies!
