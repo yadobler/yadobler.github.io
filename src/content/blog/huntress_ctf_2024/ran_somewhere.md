@@ -19,7 +19,7 @@ This is very very fun. There's a lot of funny names too, **but not all are fake*
 > -Mack Eroni
 > President
 >
-> [Check out our new website!](https://sites.google.com/view/id-10-t/home)
+> [Check out our new website!](https://archive.is/U3veE)
 > ![company logo.png](./images/ran_somewhere_file1.png)
 
 The company logo here links to the second encoded file, which is an _PNG_ file of their logo. I started laughing when i saw *ID10T solutions*. A few important things to note here:
