@@ -3,6 +3,7 @@ title:          "Strange Calc (Huntress CTF 2024)"
 pubDate:        2024-11-27
 updatedDate:    2024-12-04
 description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
+hideListing: true
 ---
 
 > Author: @JohnHammond

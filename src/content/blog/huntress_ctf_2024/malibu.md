@@ -2,6 +2,7 @@
 title:          "Malibu (Huntress CTF 2024)"
 pubDate:        2024-11-27
 description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
+hideListing: true
 ---
 
 > Author: Truman Kain
