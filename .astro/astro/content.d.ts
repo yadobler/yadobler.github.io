@@ -159,13 +159,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
-"2024-04-10-Cantonese_Reflection.md": {
-	id: "2024-04-10-Cantonese_Reflection.md";
+"2024-04-10-Cantonese_Reflection.mdx": {
+	id: "2024-04-10-Cantonese_Reflection.mdx";
   slug: "2024-04-10-cantonese_reflection";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
+} & { render(): Render[".mdx"] };
 "huntress_ctf_2024.md": {
 	id: "huntress_ctf_2024.md";
   slug: "huntress_ctf_2024";
