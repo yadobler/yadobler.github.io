@@ -1,5 +1,25 @@
-<h1>This is a 404 page</h1>
 
-<p>Something went wrong. Please go to <a href="yadobler.github.io">the homepage</a> and maybe look in the blogs index!</p>
 
-<p>thanks~~~</p>
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>This is a 404 page</h1>
+			<p>Something went wrong. Please go to <a href="/">the homepage</a> and maybe look in the blogs index!</p>
+
+			<p>thanks~~~</p>
+		</main>
+		<Footer />
+	</body>
+</html>
