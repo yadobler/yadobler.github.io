@@ -52,8 +52,7 @@ All commands are run from the root of the project, from a terminal:
 
 Check out [the Astro documentation](https://docs.astro.build) or jump into their [Discord server](https://astro.build/chat).
 
-## Acknoledgements
+## Acknowledgements
 
 - Astro framework (of course) 
-- This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
-- SVG Icons: https://icons8.com/
+- This theme and icons are based off: [AstroPaper](https://github.com/satnaing/astro-paper)
