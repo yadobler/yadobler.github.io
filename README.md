@@ -56,4 +56,4 @@ Check out [the Astro documentation](https://docs.astro.build) or jump into their
 
 - Astro framework (of course) 
 - This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
-- SVG Icons: https://icons8.com/ 
+- SVG Icons: https://icons8.com/
