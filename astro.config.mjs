@@ -4,10 +4,18 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import embeds from 'astro-embed/integration';
-import { SITE } from "./src/config";
+import tailwind from "@astrojs/tailwind";
+import { SITE } from "./src/consts";
 
 // https://astro.build/config
 export default defineConfig({
     site: SITE.website,
-	integrations: [embeds(), mdx(), sitemap()],
+	integrations: [
+        embeds(), 
+        mdx(), 
+        sitemap(),
+        tailwind({
+            applyBaseStyles: false,
+        }),
+    ],
 });
