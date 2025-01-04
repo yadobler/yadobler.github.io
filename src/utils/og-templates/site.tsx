@@ -1,5 +1,5 @@
 import satori from "satori";
-import { SITE } from "@config";
+import { SITE } from "@consts";
 import loadGoogleFonts, { type FontOptions } from "../loadGoogleFont";
 
 export default async () => {
