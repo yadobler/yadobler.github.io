@@ -1,0 +1,17 @@
+---
+import { SITE } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+---
+
+<Layout title={`About Me | ${SITE.title}`}>
+  <Header />
+
+  <main id="main-content">
+      <h1>Hello!</h1>
+      <p>I am yukna.</p>
+  </main>
+
+  <Footer />
+</Layout>
