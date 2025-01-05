@@ -6,5 +6,6 @@ import embeds from 'astro-embed/integration';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [mdx(), embeds(), tailwind()]
+    site: 'https://yadobler.github.io/',
+    integrations: [mdx(), embeds(), tailwind()]
 });
