@@ -6,6 +6,7 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
+            export NODE_OPTIONS="--no-deprecation"
             exec zsh
             '';
 }
