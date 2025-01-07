@@ -2,21 +2,40 @@
 
 Made with [*Astro*](https://docs.astro.build).
 
+[![Deploy to GitHub Pages](https://github.com/yadobler/yadobler.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/yadobler/yadobler.github.io/actions/workflows/deploy.yml)
+
+This is my first real HTML + CSS project with a framework (Astro).
+
+This project helps me learn some of the basics of:
+- HTML
+- Typescript
+    - Astro framework
+- CSS 
+    - Tailwind CSS
+- Node
+    - npm
+
 ## 🚀 Project Structure
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+src /
+├── assets /
+│   ├── astro.svg
+│   ├── background.svg
+│   └── icons /
+├── components
+│   ├── Furigana.astro
+│   └── Header.astro
+├── content /
+│   ├── blog /
+│   └── config.ts
+├── layouts /
+│   └── Layout.astro
+├── pages /
+│   └── index.astro
+└── styles /
+    └── base.css
 ```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
 
 ## 🧞 Commands
 
@@ -30,6 +49,4 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
 
