@@ -7,5 +7,8 @@ import embeds from 'astro-embed/integration';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://yadobler.github.io/',
-    integrations: [embeds(), mdx(), tailwind()]
+    integrations: [embeds(), mdx(), tailwind()],
+    experimental: {
+        svg: true,
+    }
 });
