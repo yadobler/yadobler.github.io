@@ -15,6 +15,11 @@ This project helps me learn some of the basics of:
 - Node
     - npm
 
+## Credits
+- [Google Material Icons](https://fonts.google.com/)
+- [Astro docs](https://docs.astro.build/)
+- [0xdedinfosec](https://github.com/0xdedinfosec/0xdedinfosec-astro) for inspiration
+
 ## 🚀 Project Structure
 
 ```text

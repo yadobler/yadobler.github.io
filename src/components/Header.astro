@@ -1,5 +1,6 @@
 ---
-import MenuLogo from '@assets/icons/menu.svg'
+import MenuIcon from '@assets/icons/menu.svg'
+import CloseIcon from '@assets/icons/close.svg'
 const pages = ["About Me", "Blog", "Showcase"];
 ---
 <header>
@@ -11,16 +12,11 @@ const pages = ["About Me", "Blog", "Showcase"];
         </div>
 
         <!-- visible on small screens -->
-        <div class="flex sm:hidden items-center">
-            <MenuLogo />    
+        <div id="hamburger" class="flex sm:hidden items-center hover:bg-gray-500 px-3 py-0.5 rounded-lg transition-all">
+            <div id="hamburger-icon"><MenuIcon /></div>
+            <div id="close-icon" class="hidden"><CloseIcon /></div>
         </div>
-<!-- 
-        {pages.map(item => (
-        <div class="flex sm:hidden flex-initial justify-items-stretch">
-            <a href={item} class="hover:bg-gray-500 px-3 py-0.5 rounded-lg transition-colors">{item}</a>
-</div>))}
--->
-        
+
         <!-- visible on large screens -->
         {pages.map(item => (
         <div class="hidden sm:flex flex-initial justify-items-stretch">
@@ -28,4 +24,21 @@ const pages = ["About Me", "Blog", "Showcase"];
         </div>))}
         
     </nav>
+
+    <!-- visible on small screens -->
+    <nav id="hamburger-nav-links" class="h-screen hidden flex-col justify-around flex-nowrap gap-10 text-lg px-8 py-2 bg-gray-400 text-black">
+        <div class="-50 flex-col justify-end">
+            {pages.map(item => (
+            <div class="flex sm:hidden flex-initial justify-items-stretch">
+                <a href={item} class="hover:bg-gray-500 px-3 py-0.5 transition-colors">{item}</a>
+            </div>))}
+    </nav>
+
+    <script>
+    document.querySelector('#hamburger')?.addEventListener('click', () => {
+        document.querySelector('#hamburger-nav-links')?.classList.toggle('hidden');
+        document.querySelector('#hamburger-icon')?.classList.toggle('hidden');
+        document.querySelector('#close-icon')?.classList.toggle('hidden');
+    });
+    </script></script>
 </header>
