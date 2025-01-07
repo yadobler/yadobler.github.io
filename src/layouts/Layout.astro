@@ -1,4 +1,5 @@
 ---
+import Header from '@components/Header.astro';
 
 interface Props {
     title: string;
@@ -14,9 +15,14 @@ const { title, description="Yukna's Blog" } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <meta name="description" content={description}>
-        <title>{title} - Yukna's Blog</title>
+        <title>{title} | Yadobler Blog</title>
 	</head>
-	<body>
+    <body>
+        <header>
+            test
+        </header>
+        <main>
 		<slot />
+        </main>
 	</body>
 </html>
