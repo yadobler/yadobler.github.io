@@ -13,20 +13,55 @@ const pages : [Page] = [
 ]
 
 const currentPath = Astro.url.pathname;
+const indicator = p => (currentPath === p.href ? "underline" : "no-underline");
 ---
-<header>
-    <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
-
+<header class="relative max-h-screen flex flex-col">
+    <div class="max-w-screen flex flex-row items-center justify-between p-4">
         <!-- logo -->
         <div class="text-lg font-semibold">
-            <a href={logo.href} class={(currentPath === logo.href && "bg-red-500 ") + "self-center text-2xl font-semibold whitespace-nowrap"}>{logo.name}</a>
+            <a href={logo.href} class={indicator(logo) + " self-center text-2xl font-semibold whitespace-nowrap"}>{logo.name}</a>
         </div>
 
-        <nav class="flex flex-row text-lg gap-4">
+        <!-- wide screen navbar -->
+        <nav class="hidden sm:flex sm:flex-row text-lg gap-4">
             {pages.map(page => (
-            <a href={page.href} class={(currentPath === page.href && "bg-red-500") + " text-gray-700"}>{page.name}</a>
+            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
             ))}
         </nav>
 
+        <!-- toggle navbar -->
+        <div id="toggle-navmenu" class="sm:hidden">
+            <button id="menu-open" class="text-xl"> M </button>
+            <button id="menu-close" class="hidden text-xl"> X </button>
+        </div>
     </div>
+
+    <!-- small screen navbar -->
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md z-50">
+        <nav class="flex flex-col justify-end text-lg gap-4 p-4">
+            {pages.map(page => (
+            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
+            ))}
+        </nav>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const menuToggle = document.querySelector("#toggle-navmenu");
+        const menuOpen = document.querySelector("#menu-open");
+        const menuClose = document.querySelector("#menu-close");
+        const mobileMenu = document.querySelector("#mobile-menu");
+
+        menuToggle.addEventListener("click", () => {
+            const isMenuVisible = !mobileMenu.classList.contains("hidden");
+
+            // Toggle visibility of the mobile menu
+            mobileMenu.classList.toggle("hidden");
+
+            // Toggle buttons
+            menuOpen.classList.toggle("hidden", isMenuVisible);
+            menuClose.classList.toggle("hidden", !isMenuVisible);
+        });
+    });
+    </script>
 </header>
