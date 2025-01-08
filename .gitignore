@@ -24,4 +24,4 @@ pnpm-debug.log*
 .idea/
 
 # my temporary folder for writeup that violates syntax
-src/content/blog/_tmp/
+_tmp/

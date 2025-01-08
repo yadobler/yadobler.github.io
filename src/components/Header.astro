@@ -1,44 +1,32 @@
 ---
-import MenuIcon from '@assets/icons/menu.svg'
-import CloseIcon from '@assets/icons/close.svg'
-const pages = ["About Me", "Blog", "Showcase"];
+interface Page {
+    name: string;
+    href: string;
+}
+
+const logo = {name: "Yadobler", href: "/"}
+
+const pages : [Page] = [
+    {name: "About Me", href: "/about"},
+    {name: "Blog",     href: "/blog"},
+    {name: "Showcase", href: "/showcase"}
+]
+
+const currentPath = Astro.url.pathname;
 ---
 <header>
-    <nav class="w-screen flex flex-row justify-around flex-nowrap gap-10 text-lg px-8 py-2 bg-gray-400 text-black">
-        <div class="flex flex-auto justify-items-start">
-            <a href="/" class="hover:bg-gray-500 px-3 py-0.5 rounded-lg transition-colors"> 
-                Yadobler
-            </a>
+    <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+
+        <!-- logo -->
+        <div class="text-lg font-semibold">
+            <a href={logo.href} class={(currentPath === logo.href && "bg-red-500 ") + "self-center text-2xl font-semibold whitespace-nowrap"}>{logo.name}</a>
         </div>
 
-        <!-- visible on small screens -->
-        <div id="hamburger" class="flex sm:hidden items-center hover:bg-gray-500 px-3 py-0.5 rounded-lg transition-all">
-            <div id="hamburger-icon"><MenuIcon /></div>
-            <div id="close-icon" class="hidden"><CloseIcon /></div>
-        </div>
+        <nav class="flex flex-row text-lg gap-4">
+            {pages.map(page => (
+            <a href={page.href} class={(currentPath === page.href && "bg-red-500") + " text-gray-700"}>{page.name}</a>
+            ))}
+        </nav>
 
-        <!-- visible on large screens -->
-        {pages.map(item => (
-        <div class="hidden sm:flex flex-initial justify-items-stretch">
-            <a href={item} class="hover:bg-gray-500 px-3 py-0.5 rounded-lg transition-colors">{item}</a>
-        </div>))}
-        
-    </nav>
-
-    <!-- visible on small screens -->
-    <nav id="hamburger-nav-links" class="h-screen hidden flex-col justify-around flex-nowrap gap-10 text-lg px-8 py-2 bg-gray-400 text-black">
-        <div class="-50 flex-col justify-end">
-            {pages.map(item => (
-            <div class="flex sm:hidden flex-initial justify-items-stretch">
-                <a href={item} class="hover:bg-gray-500 px-3 py-0.5 transition-colors">{item}</a>
-            </div>))}
-    </nav>
-
-    <script>
-    document.querySelector('#hamburger')?.addEventListener('click', () => {
-        document.querySelector('#hamburger-nav-links')?.classList.toggle('hidden');
-        document.querySelector('#hamburger-icon')?.classList.toggle('hidden');
-        document.querySelector('#close-icon')?.classList.toggle('hidden');
-    });
-    </script></script>
+    </div>
 </header>
