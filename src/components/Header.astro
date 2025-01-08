@@ -1,4 +1,7 @@
 ---
+import OpenIcon from "@assets/icons/menu.svg";
+import CloseIcon from "@assets/icons/close.svg";
+
 interface Page {
     name: string;
     href: string;
@@ -13,9 +16,9 @@ const pages : [Page] = [
 ]
 
 const currentPath = Astro.url.pathname;
-const indicator = p => (currentPath === p.href ? "underline" : "no-underline");
+const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500 via-violet-800 to-red-500 text-transparent bg-clip-text" : "bg-transparent");
 ---
-<header class="relative max-h-screen flex flex-col">
+<header class="relative max-h-screen flex flex-col bg-sky-100">
     <div class="max-w-screen flex flex-row items-center justify-between p-4">
         <!-- logo -->
         <div class="text-lg font-semibold">
@@ -31,14 +34,14 @@ const indicator = p => (currentPath === p.href ? "underline" : "no-underline");
 
         <!-- toggle navbar -->
         <div id="toggle-navmenu" class="sm:hidden">
-            <button id="menu-open" class="text-xl"> M </button>
-            <button id="menu-close" class="hidden text-xl"> X </button>
+            <span id="menu-open" class="text-xl"> <OpenIcon /> </span>
+            <span id="menu-close" class="hidden text-xl"> <CloseIcon /> </span>
         </div>
     </div>
 
     <!-- small screen navbar -->
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-md z-50">
-        <nav class="flex flex-col justify-end text-lg gap-4 p-4">
+    <div id="mobile-menu" class="hidden absolute top-full right-0 h-screen bg-white shadow-md z-50">
+        <nav class="flex flex-col items-end text-lg gap-4 p-4">
             {pages.map(page => (
             <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
             ))}
@@ -59,8 +62,8 @@ const indicator = p => (currentPath === p.href ? "underline" : "no-underline");
             mobileMenu.classList.toggle("hidden");
 
             // Toggle buttons
-            menuOpen.classList.toggle("hidden", isMenuVisible);
-            menuClose.classList.toggle("hidden", !isMenuVisible);
+            menuOpen.classList.toggle("hidden", !isMenuVisible);
+            menuClose.classList.toggle("hidden", isMenuVisible);
         });
     });
     </script>

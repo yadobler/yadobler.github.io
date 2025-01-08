@@ -17,10 +17,10 @@ const { title, description="Yukna's Blog" } = Astro.props;
         <meta name="description" content={description}>
         <title>{title} | Yadobler Blog</title>
     </head>
-    <body>
+    <body class="bg-gray-100">
         <Header />
 
-        <main>
+        <main class="p-5">
             <slot />
         </main>
 
