@@ -17,8 +17,8 @@ This project helps me learn some of the basics of:
 
 ## Credits
 - [Google Material Icons](https://fonts.google.com/)
+- [Gentlecons Interface Icons Collection](https://www.svgrepo.com/collection/gentlecons-interface-icons/) for social icons
 - [Astro docs](https://docs.astro.build/)
-- [0xdedinfosec](https://github.com/0xdedinfosec/0xdedinfosec-astro) for inspiration
 
 ## 🚀 Project Structure
 
