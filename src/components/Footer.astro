@@ -1,0 +1,70 @@
+---
+import OpenIcon from "@assets/icons/menu.svg";
+import CloseIcon from "@assets/icons/close.svg";
+
+interface Page {
+    name: string;
+    href: string;
+}
+
+const logo = {name: "Yadobler", href: "/"}
+
+const pages : [Page] = [
+    {name: "About Me", href: "/about"},
+    {name: "Blog",     href: "/blog"},
+    {name: "Showcase", href: "/showcase"}
+]
+
+const currentPath = Astro.url.pathname;
+const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500 via-violet-800 to-red-500 text-transparent bg-clip-text" : "bg-transparent");
+---
+<header class="relative max-h-screen flex flex-col bg-sky-100">
+    <div class="max-w-screen flex flex-row items-center justify-between p-4">
+        <!-- logo -->
+        <div class="text-lg font-semibold">
+            <a href={logo.href} class={indicator(logo) + " self-center text-2xl font-semibold whitespace-nowrap"}>{logo.name}</a>
+        </div>
+
+        <!-- wide screen navbar -->
+        <nav class="hidden sm:flex sm:flex-row text-lg gap-4">
+            {pages.map(page => (
+            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
+            ))}
+        </nav>
+
+        <!-- toggle navbar -->
+        <div id="toggle-navmenu" class="sm:hidden">
+            <span id="menu-open" class="text-xl"> <OpenIcon /> </span>
+            <span id="menu-close" class="hidden text-xl"> <CloseIcon /> </span>
+        </div>
+    </div>
+
+    <!-- small screen navbar -->
+    <div id="mobile-menu" class="hidden absolute top-full right-0 h-screen bg-white shadow-md z-50">
+        <nav class="flex flex-col items-end text-lg gap-4 p-4">
+            {pages.map(page => (
+            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
+            ))}
+        </nav>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const menuToggle = document.querySelector("#toggle-navmenu");
+        const menuOpen = document.querySelector("#menu-open");
+        const menuClose = document.querySelector("#menu-close");
+        const mobileMenu = document.querySelector("#mobile-menu");
+
+        menuToggle.addEventListener("click", () => {
+            const isMenuVisible = !mobileMenu.classList.contains("hidden");
+
+            // Toggle visibility of the mobile menu
+            mobileMenu.classList.toggle("hidden");
+
+            // Toggle buttons
+            menuOpen.classList.toggle("hidden", !isMenuVisible);
+            menuClose.classList.toggle("hidden", isMenuVisible);
+        });
+    });
+    </script>
+</header>
