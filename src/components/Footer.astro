@@ -1,35 +1,34 @@
 ---
-import OpenIcon from "@assets/icons/menu.svg";
-import CloseIcon from "@assets/icons/close.svg";
+import GithubIcon   from "@assets/icons/github.svg";
+import MailIcon     from "@assets/icons/mail.svg";
+import LinkedinIcon from "@assets/icons/linkedin.svg";
 
-interface Page {
+interface Socials {
     name: string;
     href: string;
+    logo: any;
 }
 
-const logo = {name: "Yadobler", href: "/"}
-
-const pages : [Page] = [
-    {name: "About Me", href: "/about"},
-    {name: "Blog",     href: "/blog"},
-    {name: "Showcase", href: "/showcase"}
+const socials : [Socials] = [
+    {name:"Github", href: "#", logo: GithubIcon },
+    {name:"Mail", href: "#", logo: MailIcon },
+    {name:"Linkedin", href: "#", logo: LinkedinIcon }
 ]
 
-const currentPath = Astro.url.pathname;
-const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500 via-violet-800 to-red-500 text-transparent bg-clip-text" : "bg-transparent");
+const year = new Date().getFullYear()
+// <a href={s.href} class="items-center gap-2" key={s.name}>
+// </a>
 ---
-<footer class="flex flex-col bg-sky-100">
-    <div class="max-w-screen flex flex-row items-center justify-between p-4">
-        <!-- logo -->
-        <div class="text-lg font-semibold">
-            <a href={logo.href} class={indicator(logo) + " self-center text-2xl font-semibold whitespace-nowrap"}>{logo.name}</a>
-        </div>
-
-        <!-- wide screen navbar -->
-        <nav class="hidden sm:flex sm:flex-row text-lg gap-4">
-            {pages.map(page => (
-            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
-            ))}
-        </nav>
+<footer class="flex flex-wrap justify-between items-center gap-4 py-4 px-10 max-w-screen bg-sky-100">
+    <div class="flex justify-center items-center">
+        © Yukna'vell {year}
     </div>
+
+    <div class="flex justify-center items-center gap-4 flex-wrap">
+        {socials.map(s => (
+        <a href={s.href} class="flex items-center gap-2" key={s.name}>
+            <s.logo title={s.name} class="w-6 h-6 flex-grow-0" /> 
+        </a>
+    ))}
+    </div> 
 </footer>
