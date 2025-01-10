@@ -23,7 +23,7 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
     <div class="max-w-screen flex flex-row items-center justify-between p-4">
         <!-- logo -->
         <div class="text-lg font-semibold">
-            <a href={logo.href} class={indicator(logo) + " self-center text-2xl font-semibold whitespace-nowrap"}>{logo.name}</a>
+            <a href={logo.href} class={indicator(logo) + "self-center text-2xl font-semibold whitespace-nowrap text-gray-700 bg-clip-text"}>{logo.name}</a>
         </div>
 
         <!-- wide screen navbar -->

@@ -5,9 +5,20 @@
 
 @layer base {
     h1 {
+        @apply p-2;
+        @apply bg-green-100;
+        @apply shadow-md;
         @apply self-center;
         @apply text-center;
         @apply text-lg;
         @apply font-medium;
+    }
+
+    p {
+        @apply text-justify;
+    }
+
+    a {
+        @apply text-blue-700;
     }
 }

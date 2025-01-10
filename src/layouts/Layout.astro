@@ -19,9 +19,9 @@ const { title, description="Yukna's Blog" } = Astro.props;
         <meta name="description" content={description}>
         <title>{title} | Yadobler Blog</title>
     </head>
-    <body class="bg-gray-100 flex flex-col min-h-dvh m-0">
+    <body class="bg-gray-100 flex flex-col gap-5 min-h-dvh">
         <Header />
-        <main class="flex flex-1 p-5 justify-items-center">
+        <main class="flex flex-1 justify-items-center justify-stretch">
             <slot />
         </main>
         <Footer />
