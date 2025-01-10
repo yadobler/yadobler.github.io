@@ -1,7 +1,7 @@
 ---
 const {title, description, href} = Astro.props;
 ---
-<div class="grid grid-rows-2 items-center">
+<div class="grid grid-rows-2 items-center p-10 shadow-md container bg-red-100">
     <a href={href} class="text-black">
         <h2 class="text-3xl text-center">{title}</h2>
         <div class="text-justify text-wrap">{description}</div>
