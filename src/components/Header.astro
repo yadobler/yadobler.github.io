@@ -41,7 +41,7 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
     </div>
 
     <!-- small screen navbar -->
-    <div id="mobile-menu" class="hidden absolute top-full right-0 h-screen bg-white shadow-md z-50">
+    <div id="mobile-menu" class="hidden absolute top-full right-0 h-max bg-white shadow-md z-50">
         <nav class="flex flex-col items-end text-lg gap-4 p-4">
             {pages.map(page => (
             <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>

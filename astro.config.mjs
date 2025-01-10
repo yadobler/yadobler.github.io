@@ -9,6 +9,9 @@ export default defineConfig({
     site: 'https://yadobler.github.io/',
     trailingSlash: "never",
     integrations: [embeds(), mdx(), tailwind()],
+    css: {
+        global: true,
+    },
     experimental: {
         svg: true,
     }
