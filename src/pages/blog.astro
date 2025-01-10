@@ -1,0 +1,21 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Card from '@components/Card.astro';
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout title="Blog">
+    <div class="flex flex-col w-dvw px-10 gap-4 grow">
+        <h1 class="text-3xl justify-center">
+            My Blog posts
+        </h1>
+
+        <div class="flex flex-row flex-wrap flex-shrink-0 flex-grow-0 justify-around gap-5">
+            {
+            ["blog1", "blog2", "blog3", "asd", "asd", "lkdjalksjd", "wewqe"].map(b => (
+            <Card title={b} description="adjljas lkdlds kj." href="#" />
+            ))}
+        </div>
+    </div>
+</Layout>
