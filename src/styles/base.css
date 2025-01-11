@@ -5,13 +5,14 @@
 
 @layer base {
     h1 {
-        @apply p-2;
         @apply bg-green-100;
-        @apply shadow-md;
-        @apply self-center;
-        @apply text-center;
-        @apply text-lg;
         @apply font-medium;
+        @apply justify-center;
+        @apply p-2;
+        @apply self-center;
+        @apply shadow-md;
+        @apply text-center;
+        @apply text-3xl;
     }
 
     p {
@@ -20,5 +21,13 @@
 
     a {
         @apply text-blue-700;
+    }
+
+    ul {
+        @apply list-disc pl-4; /* Apply list-disc for bullet points and pl-4 for padding */
+    }
+
+    li {
+        @apply mb-2; /* Add some spacing between list items */
     }
 }
