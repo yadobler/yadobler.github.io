@@ -19,6 +19,7 @@ This project helps me learn some of the basics of:
 - [Google Material Icons](https://fonts.google.com/)
 - [Gentlecons Interface Icons Collection](https://www.svgrepo.com/collection/gentlecons-interface-icons/) for social icons
 - [Astro docs](https://docs.astro.build/)
+- ChatGPT for debugging, really!
 
 ## 🚀 Project Structure
 
