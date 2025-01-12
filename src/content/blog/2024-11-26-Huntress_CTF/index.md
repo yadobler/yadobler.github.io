@@ -12,7 +12,7 @@ tags:
     - Huntress
     - HuntressCTF2024
 unlist: False
-draft: False
+draft:  False
 ---
 
 Huntress CTF 2024 was an exhilarating experience, held throughout October in celebration of Cybersecurity Awareness Month. With fresh challenges released daily, it offered a dynamic and engaging way to explore the field of cybersecurity. As my first-ever CTF, it was a manageable yet rewarding dive into topics like reverse engineering and problem-solving. Although designed as a team challenge, I tackled it solo, which made the learning experience even more personal and gratifying.
@@ -153,7 +153,3 @@ Below is a checklist of the challenges I tackled during the event. Striked-out e
    - [ ] ~~Palimpsest~~
 
 Despite these setbacks, Huntress CTF 2024 was a fantastic introduction to the world of CTFs and an inspiring reminder of the creativity and collaboration at the heart of cybersecurity. Special thanks to ChatGPT for brainstorming and importantly for generating scripts quickly when given the appropriate goals, which helped reduce time wasted trying to debug scripts. Definitely a help especially since I also had school work to complete.
-
-<!-- 
-vim:wrap:spell:linebreak:showbreak=\ \ :
--->
