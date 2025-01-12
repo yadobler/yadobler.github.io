@@ -1,11 +1,13 @@
 ---
 import Layout from '@layouts/Layout.astro';
-const { frontmatter } = Astro.props;
+
+type Props = CollectionEntry<'blog'>['data'];
+const { title, author, pubDate, modDate, heroImage, description, tags } = Astro.props;
 ---
 
 <Layout title="test">
-    <h1>{frontmatter.title}</h1>
-    <h2>By: {frontmatter.author} on {frontmatter.pubDate}{frontmatter.modDate && ( "(Updated: " + {frontmatter.modDate} + ")" )}</h2>
-    <h3>{frontmatter.tags.map(t => (<p>{t}, </p>))}</h3>
+    <h1>{title}</h1>
+    <h2>By: {author} on {pubDate}{modDate && ( `(Updated: {modDate} + )` ) }</h2> 
+    <h3>{tags.map(t => (<p>{t}, </p>))}</h3>
     <slot />
 </Layout>

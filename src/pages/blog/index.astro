@@ -19,7 +19,7 @@ const sortedPosts = visiblePosts.sort((a, b) => Number(new Date(b.data.pubDate))
 
         <div class="flex flex-row flex-wrap flex-shrink-0 flex-grow-0 justify-around gap-5">
             {sortedPosts.map(b => (
-            <Card title={b.data.title} href="#">
+            <Card title={b.data.title} href=`/blog/${b.id}/`>
                 <p>{b.data.description}</p>
             </Card>
             ))}
