@@ -1,7 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import Card from '@components/Card.astro';
-import { getCollection } from 'astro:content';
+import { type CollectionEntry,  getCollection } from 'astro:content';
 
 // Get all blog posts
 const allBlogPosts = await getCollection('blog');
@@ -9,7 +9,8 @@ const allBlogPosts = await getCollection('blog');
 const visiblePosts = allBlogPosts.filter((post) => post.data.draft !== true && post.data.unlist !== true);
 // Sort the filtered posts by `pubDate`.
 const sortedPosts = visiblePosts.sort((a, b) => Number(new Date(b.data.pubDate)) - Number(new Date(a.data.pubDate)));
-console.log(allBlogPosts.map(p => (p.data.title)))
+console.log("Iterating all blog ids")
+console.log(allBlogPosts.map(p => (p.id)))
 ---
 
 <Layout title="Blog">
@@ -20,7 +21,7 @@ console.log(allBlogPosts.map(p => (p.data.title)))
 
         <div class="flex flex-row flex-wrap flex-shrink-0 flex-grow-0 justify-around gap-5">
             {sortedPosts.map(b => (
-            <Card title={b.data.title} href=`/blog/${b.id}/`>
+            <Card title={b.data.title} href=`/blog/${b.id}/` img={b.data.heroImage}>
                 <p>{b.data.description}</p>
             </Card>
             ))}

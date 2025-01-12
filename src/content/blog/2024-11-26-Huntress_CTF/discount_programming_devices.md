@@ -1,8 +1,18 @@
 ---
 title:          "Discount Programming Devices (Huntress CTF 2024)"
 pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
-hideListing: true
+tags:
+    - CTF
+    - ComSec
+    - CyberSecurity
+    - Write-up
+    - Huntress
+    - Huntress-CTF-2024
+unlist:    true
+draft:     false
+description: ""
+heroImage: ""
+author: "yukna"
 ---
 
 > Author: @sudo_Rem
@@ -15,12 +25,6 @@ The file given has a python extension. Inspecting it, it was a one liner (*effec
 
 ```py
 _ = lambda __ : __import__('zlib').decompress(__import__('base64').b64decode(__[::-1]))
-
----
-title:          "cleaned (Huntress CTF 2024)"
-pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
----
 
 # cleaned
 

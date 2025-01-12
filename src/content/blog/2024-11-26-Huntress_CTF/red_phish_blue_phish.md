@@ -1,8 +1,19 @@
 ---
 title:          "Red Phish Blue Phish (Huntress CTF 2024)"
 pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024 SMTP
-hideListing: true
+tags:
+    - CTF
+    - ComSec
+    - CyberSecurity
+    - Write-up
+    - Huntress
+    - Huntress-CTF-2024
+    - SMTP
+unlist:    true
+draft:     false
+description: ""
+heroImage: ""
+author: "yukna"
 ---
 
 > Author: Truman Kain (@truman.huntress), Adam Rice (@adam.huntress)

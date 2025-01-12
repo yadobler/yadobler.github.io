@@ -1,8 +1,18 @@
 ---
 title:          "The Void (Huntress CTF 2024)"
 pubDate:        2024-11-27
-description:    CTF ComSec CyberSecurity Write-up Huntress Huntress-CTF-2024
-hideListing: true
+tags:
+    - CTF
+    - ComSec
+    - CyberSecurity
+    - Write-up
+    - Huntress
+    - Huntress-CTF-2024
+unlist:    true
+draft:     false
+description: ""
+heroImage: ""
+author: "yukna"
 ---
 
 > Author: @JohnHammond#6971
