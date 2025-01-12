@@ -15,6 +15,16 @@ This project helps me learn some of the basics of:
 - Node
     - npm
 
+## Goals
+- Produce a **static** webpage 
+- Ensure responsive page design
+- Avoid need for server rendering (hence being able to post on github) 
+- ~~Avoid~~ Reduce client side javascript
+- Avoid using any starter templates (only allow snippets from docs) 
+- Get a better understanding on java script frameworks 
+- Get a better understanding on CSS
+- Get a better understanding on basic HTML
+
 ## Credits
 - [Google Material Icons](https://fonts.google.com/)
 - [Gentlecons Interface Icons Collection](https://www.svgrepo.com/collection/gentlecons-interface-icons/) for social icons
