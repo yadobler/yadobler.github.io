@@ -7,12 +7,25 @@
     h1 {
         @apply bg-green-100;
         @apply font-medium;
-        @apply justify-center;
-        @apply p-2;
-        @apply self-center;
         @apply shadow-md;
+        @apply self-center;
         @apply text-center;
-        @apply text-3xl;
+        @apply text-4xl;
+        @apply p-2;
+    }
+    
+    h2 {
+        @apply bg-blue-100;
+        @apply font-medium;
+        @apply shadow-md;
+        @apply text-xl;
+    }
+    
+    h3 {
+        @apply bg-transparent;
+        @apply font-medium;
+        @apply text-justify;
+        @apply text-lg;
     }
 
     p {
@@ -24,7 +37,10 @@
     }
 
     ul {
-        @apply list-disc pl-4; /* Apply list-disc for bullet points and pl-4 for padding */
+        /* Apply list-disc for bullet points and pl-4 for padding */
+        @apply list-disc; 
+        @apply pl-4; 
+        @apply list-outside; 
     }
 
     li {
