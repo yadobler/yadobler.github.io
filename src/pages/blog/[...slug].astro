@@ -1,5 +1,6 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import Prose from '@components/Prose.astro';
 import Layout from '@layouts/Layout.astro';
 import FormattedDate from '@components/FormattedDate.astro';
@@ -40,6 +41,7 @@ const { title, author, pubDate, modDate, heroImage, description, tags } = post.d
 
         <div class="flex p-10 justify-center">
             <Prose>
+                <div> {heroImage && <Image src={heroImage} alt={description} class="shadow:md" />} </div>
                 <Content />
             </Prose>
         </div>

@@ -3,7 +3,7 @@ title: "template"
 author: "Yukna"
 pubDate: 2025-01-01
 modDate: 2025-01-02
-heroImage: z.string().optional(),
+heroImage: ""
 description: "This is template file."
 tags: 
     - Template 
