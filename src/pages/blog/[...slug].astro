@@ -5,11 +5,11 @@ import Layout from '@layouts/Layout.astro';
 import FormattedDate from '@components/FormattedDate.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post, // Pass the post as props
-	}));
+    const posts = await getCollection('blog');
+    return posts.map((post) => ({
+        params: { slug: post.id },
+        props: post, // Pass the post as props
+    }));
 }
 
 // Ensure `post` is passed via props
@@ -21,21 +21,28 @@ const { title, author, pubDate, modDate, heroImage, description, tags } = post.d
 <Layout title={title}>
     <div class="flex flex-col w-dvw px-10 gap-5 grow">
         <h1>{title}</h1>
-        <h3>
-            By: {author} on <FormattedDate date={pubDate} />
-            {modDate && (
-                <span> (Updated: <FormattedDate date={modDate} />)</span>
-            )}
-        </h3>
-        <div class="flex flex-row flex-wrap gap-2">
-            {tags.map((t) => (
+
+        <div class="grid-rows-2">
+            <div class="py-5">
+                By: {author} on <FormattedDate date={pubDate} />
+                {modDate && (
+                <span> 
+                    (Updated: <FormattedDate date={modDate} />)
+                </span>
+                )}
+            </div>
+            <div class="flex flex-row flex-wrap gap-2">
+                {tags.map((t) => (
                 <span class="bg-red-100 shadow-md">{t}</span>
-            ))}
+                ))}
+            </div>
         </div>
-        <div class="p-10 leading-relaxed">
+
+        <div class="flex p-10 justify-center">
             <Prose>
                 <Content />
             </Prose>
         </div>
+
     </div>
 </Layout>
