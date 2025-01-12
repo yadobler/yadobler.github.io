@@ -19,6 +19,7 @@
         @apply font-medium;
         @apply shadow-md;
         @apply text-xl;
+        @apply p-2;
     }
     
     h3 {
