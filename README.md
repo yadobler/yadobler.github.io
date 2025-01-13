@@ -25,32 +25,69 @@ This project helps me learn some of the basics of:
 - Get a better understanding on CSS
 - Get a better understanding on basic HTML
 
-## Credits
-- [Google Material Icons](https://fonts.google.com/)
-- [Gentlecons Interface Icons Collection](https://www.svgrepo.com/collection/gentlecons-interface-icons/) for social icons
-- [Astro docs](https://docs.astro.build/)
-- ChatGPT for debugging, really!
-
-## 🚀 Project Structure
+## Packages used
 
 ```text
-src /
-├── assets /
-│   ├── astro.svg
-│   ├── background.svg
-│   └── icons /
-├── components
-│   ├── Furigana.astro
-│   └── Header.astro
-├── content /
-│   ├── blog /
-│   └── config.ts
-├── layouts /
-│   └── Layout.astro
-├── pages /
-│   └── index.astro
-└── styles /
-    └── base.css
+yadobler.github.io
+├── @astrojs/mdx@4.0.3
+├── @astrojs/tailwind@5.1.4
+├── @tailwindcss/typography@0.5.16
+├── astro-embed@0.9.0
+├── astro@5.1.2
+└── tailwindcss@3.4.17
+```
+
+## Project Structure
+
+```text
+(root)
+├── dist / 
+│   └── (generated html pages)
+├── node_modules /
+│   └── (node packages)
+├── public
+│   └── favicon.svg
+├── src
+│   ├── assets
+│   │   ├── (assets)
+│   │   └── icons
+│   │       └── (icon svgs)
+│   ├── components
+│   │   ├── Card.astro
+│   │   ├── Footer.astro
+│   │   ├── FormattedDate.astro
+│   │   ├── Furigana.astro
+│   │   ├── Header.astro
+│   │   └── Prose.astro
+│   ├── content
+│   │   ├── blog
+│   │   │   ├── (folders for group posts)
+│   │   │   │   └── (markdown files)
+│   │   │   ├── (markdown files)
+│   │   │   └── template.md
+│   │   └── config.ts
+│   ├── layouts
+│   │   └── Layout.astro
+│   ├── pages
+│   │   ├── 404.astro
+│   │   ├── about.astro
+│   │   ├── blog
+│   │   │   ├── index.astro
+│   │   │   └── [...slug].astro
+│   │   ├── contactme.astro
+│   │   └── index.astro
+│   └── styles
+│       └── base.css
+├── astro.config.mjs
+├── LICENSE
+├── package.json
+├── package-lock.json
+├── README.md
+├── shell.nix
+├── tailwind.config.mjs
+└── tsconfig.json
+
+1677 directories, 13978 files
 ```
 
 ## 🧞 Commands
@@ -66,3 +103,8 @@ All commands are run from the root of the project, from a terminal:
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
+## Credits
+- [Google Material Icons](https://fonts.google.com/)
+- [Gentlecons Interface Icons Collection](https://www.svgrepo.com/collection/gentlecons-interface-icons/) for social icons
+- [Astro docs](https://docs.astro.build/)
+- ChatGPT for debugging, really!
