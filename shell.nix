@@ -5,8 +5,5 @@ pkgs.mkShell {
     npm-check-updates
   ];
 
-  shellHook = ''
-            export NODE_OPTIONS="--no-deprecation"
-            exec zsh
-            '';
+  NODE_OPTIONS = "--no-deprecation";
 }
