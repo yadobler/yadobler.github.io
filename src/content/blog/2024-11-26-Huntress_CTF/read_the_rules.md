@@ -2,7 +2,7 @@
 title: "Read The Rules - Huntress CTF 2024 - "
 author: "Yukna"
 pubDate: 2024-11-27
-modDate: 2024-12-04
+modDate: 2025-01-29
 description: "Writeup of Read The Rules for Huntress CTF 2024."
 heroImage: ""
 tags: 
