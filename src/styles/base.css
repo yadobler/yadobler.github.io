@@ -31,6 +31,7 @@
 
     p {
         @apply text-justify;
+        max-width: 70ch;
     }
 
     a {
@@ -42,6 +43,9 @@
         @apply list-disc; 
         @apply pl-4; 
         @apply list-outside; 
+        @apply self-stretch;
+        @apply m-2;
+        max-width: 70ch;
     }
 
     li {

@@ -1,15 +1,17 @@
 ---
 import Layout from '@layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { Image } from 'astro:assets';
+import Banner from 'assets/aboutme.png'
 ---
 
 <Layout title="About Me">
-    <div class="flex flex-col w-dvw px-10 gap-2 grow">
-        <h1>
-            I am Yukna!
-        </h1>
-        <p>Yukna'vell</p>
+    <div class="flex flex-col w-dvw px-10 gap-4 grow items-center">
+        <h1>Hello!</h1>
+        <p>My name is <b>Yuknavell</b>. I come in many names...</p>
+        <ul class="max-w-[70ch]">
+            <li><span class="font-bold">[Yuknavell]</span>: This is my first name. I write this on my homeworks any non-official documents.</li>
+            <li><span class="font-bold">[Yuknavell S&#47;O Thiyagarajan]</span>: </li>
+            <li><span class="font-bold">[]</span>: </li>
+        </ul>
     </div>
 </Layout>
