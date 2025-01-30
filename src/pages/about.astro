@@ -3,13 +3,13 @@ import Layout from '@layouts/Layout.astro';
 import Furigana from "@components/Furigana.astro";
 import { Image } from 'astro:assets';
 import Banner from '../assets/banner.jpg';
-import mangled from '../assets/tamilname_mangled.png'
+import Mangled from '../assets/tamilname_mangled_2.png'
 ---
 
-<Layout title="About Me">
+<Layout title="About Me" description="About Yukna">
     <div class="flex flex-col w-max-[70ch] px-10 gap-4 grow items-center">
         <h1>Hello!</h1>
-        <Image src={Banner} alt='Picture of me overlooking mountain range' class="shadow-md rounded-xl" />
+        <Image src={Banner} alt='Picture of me overlooking mountain range'/>
         <p>My name is <b>Yuknavell</b>. (He/His/Him/His)</p> 
         <p>I come in many names but <b>Yukna</b> or <b>Yadobler</b> is fine.</p>
 
@@ -17,16 +17,26 @@ import mangled from '../assets/tamilname_mangled.png'
         <h2>What's my name?</h2>
         <h3>Here are some valid names:</h3>
         <ul>
-            <li><b>[Yuknavell]</b>: This is my first name. I write this on my homeworks any non-official documents.</li>
-            <li><b>[Yuknavell S&#47;O Thiyagarajan]</b>: My legal name. A patronym, where S&#47;O refers to <a href="https://en.wikipedia.org/wiki/Indian_Singaporeans#Naming_conventions">'son of'</a>. Shortens (officially) to <b>T. Yuknavell</b>.</li>
-            <li><b>[Yukna]</b>: This is my canonical shortened name and probably what I introduce myself as in real life.</li>
-            <li><b>[Yadobler]</b>: This is my main username. Treat me a meal and I'll explain the history of this.</li>
-            <li><b>[யுக்னவேல்]</b>: <b>Yuknavell</b> in Tamil.</li>
-            <li><b><Furigana hanzi="威玉鉤" jyutping="wai1 juk6 ngau1" /></b>: <b>Wai Yuhk Ngau</b> in Cantonese Yale (Jyutping in ruby/furigana above each character). This becomes <b>Wēi Yù Gōu</b></li>
+            <li><b>Yuknavell</b>: This is my first name. I write this on my homeworks any non-official documents.</li>
+            <li><b>Yuknavell S&#47;O Thiyagarajan</b>: My legal name. A patronym, where S&#47;O refers to <a href="https://en.wikipedia.org/wiki/Indian_Singaporeans#Naming_conventions">'son of'</a>. Shortens (officially) to <b>T. Yuknavell</b>.</li>
+            <li><b>Yukna</b>: This is my canonical shortened name and probably what I introduce myself as in real life.</li>
+            <li><b>Vell</b>: I sign off as <i>Yukna Vell</i>, to emphasise <i>Yukna</i> as the canonical term of addess. This also implies my last name is <i>Vell</i>, leading some to address me as <b>(Mr.) Vell</b>. I do not mind despite the technicallities.</li>
+            <li><b>Yadobler</b>: This is my main username. Treat me a meal and I'll explain the history of this.</li>
+            <li><b>யுக்னவேல்</b>: <b>Yuknavell</b> in Tamil. It is <a href="https://en.wiktionary.org/wiki/%E0%A4%B5%E0%A4%BF%E0%A4%98%E0%A5%8D%E0%A4%A8#Sanskrit">Vighna விக்ன </a> + <a href="https://en.wikipedia.org/wiki/Vel">Vel வேல்</a>. Vighna (Obstacles) is from <i>Vighneshwara</i> or <a href="https://en.wikipedia.org/wiki/Ganesha"><i><b>Vignaa</b> Vinayagar</i></a> so my name would be both brother Gods Ganeshan and Muragan. Anyways something happened and I became <i>Yukna</i>vell. As far as i know, there's no meaningful Dravidian or Indo-European lemma with <i>Yukna</i>.</li>
+            <li><b><Furigana hanzi="威玉鉤" jyutping="wai1 juk6 ngau1" /></b>: <b>Wai Yuhk Ngau</b> in Cantonese Yale (Jyutping in ruby/furigana above each character). This becomes <b>Wēi Yù Gōu</b> in mandarin, and <b>Oai Ngọc Câu</b> in Vietnamese. Yes, <i>Yu Gou</i>, <i>Yuhk Ngau</i>, <i>'Au</i>, and  <i>"Câu"</i> are not normal names. However, what <i>makes</i> a name???? Surprisingly <i>Yuhk Ngau</i> sounds like my name without <a href="https://en.wikipedia.org/wiki/Proper_Cantonese_pronunciation">Initial nasal dropping <i>(ngau -> au)</i></a></li>
         </ul>
+
+        <p> Also what is up with the unicode encoding: </p> <Image src={Mangled} alt='Mangled rendering of Tamil unicode in neovim' />
+
         <h3>Here are <b>NOT</b> names:</h3>
         <ul>
-            <li><b>[]</b>: </li>
+            <li><b>Abdullah</b>: Amusing but it's not my name.</li>
+            <li><b>(Mr.) Thiyagarajan</b>: That is my father, not me.</li>
+            <li><b>Yuknav</b>: incorrect.</li>
+            <li><b>Yu-na</b>: Many people (of Hokkien descent) find it hard to pronounce the <i>k</i> sound. I'll forgive this but if possible, do not call me <a href="https://en.wikipedia.org/wiki/Im_Yoon-ah">Yoo na</a></li>
+            <li><b>Ah Yuk</b>: Had a boss who called me that. He lost his job and got dishonorably discharged from service - Such is the <i>character</i> of anyone who calls me ah yuk. You must rethink your life if you are that person.</li>
+            <li><b>Yuki</b>: reserved.</li>
+            <li><b>Vela</b>: reserved.</li>
         </ul>
     </div>
 </Layout>

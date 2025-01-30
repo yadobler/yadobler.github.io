@@ -50,4 +50,9 @@
     li {
         @apply mb-2; /* Add some spacing between list items */
     }
+
+    img {
+        @apply shadow-md;
+        @apply rounded-xl;
+    }
 }
