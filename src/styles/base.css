@@ -50,5 +50,6 @@
 
     li {
         @apply mb-2; /* Add some spacing between list items */
+        max-width: 70ch;
     }
 }
