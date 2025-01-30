@@ -45,11 +45,9 @@
         @apply list-outside; 
         @apply self-stretch;
         @apply m-2;
-        max-width: 70ch;
     }
 
     li {
         @apply mb-2; /* Add some spacing between list items */
-        max-width: 70ch;
     }
 }
