@@ -1,15 +1,20 @@
 ---
+import Prose from '@components/Prose.astro';
 import Layout from '@layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Content from '@content/about.mdx'
+import heroImage from '@assets/banner.jpg';
+import { Image } from 'astro:assets';
 ---
 
-<Layout title="About Me">
-    <div class="flex flex-col w-dvw px-10 gap-2 grow">
-        <h1>
-            I am Yukna!
-        </h1>
-        <p>Yukna'vell</p>
+<Layout title="About Me" description="About Yukna">
+    <div class="flex flex-col w-dvw px-2 gap-5">
+        <h1>Hello</h1>
+        <div class="flex flex-col justify-center items-center">
+            <Prose>
+                <div> <Image src={heroImage} alt="Me overlooking a mountain range"/> </div>
+                <div class="px-5"> <Content /> </div>
+            </Prose>
+        </div>
+
     </div>
 </Layout>

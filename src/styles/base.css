@@ -31,6 +31,7 @@
 
     p {
         @apply text-justify;
+        max-width: 70ch;
     }
 
     a {
@@ -42,9 +43,16 @@
         @apply list-disc; 
         @apply pl-4; 
         @apply list-outside; 
+        @apply self-stretch;
+        @apply m-2;
     }
 
     li {
         @apply mb-2; /* Add some spacing between list items */
+    }
+
+    img {
+        @apply shadow-md;
+        @apply rounded-xl;
     }
 }
