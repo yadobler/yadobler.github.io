@@ -26,3 +26,4 @@ pnpm-debug.log*
 # my temporary folder for writeup that violates syntax
 _tmp/
 .envrc
+.direnv
