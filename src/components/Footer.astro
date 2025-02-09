@@ -17,16 +17,18 @@ const socials : [Socials] = [
 
 const year = new Date().getFullYear()
 ---
-<footer class="flex flex-wrap justify-between items-center gap-4 py-4 px-10 max-w-screen bg-sky-100">
-    <div class="flex justify-center items-center">
-        © Yukna'vell {year}
-    </div>
+<footer class="relative max-h-screen flex flex-col bg-sky-100 items-center">
+    <div class="max-w-[90ch] w-full flex flex-row items-center p-4 justify-between">
+        <div class="flex justify-center items-center">
+            © Yukna'vell {year}
+        </div>
 
-    <div class="flex justify-center items-center gap-4 flex-wrap">
-        {socials.map(s => (
-        <a href={s.href} class="flex items-center gap-2" key={s.name}>
-            <s.logo title={s.name} class="w-6 h-6 flex-grow-0" /> 
-        </a>
-    ))}
+        <div class="flex justify-center items-center gap-4 flex-wrap">
+            {socials.map(s => (
+            <a href={s.href} class="flex items-center gap-2" key={s.name}>
+                <s.logo title={s.name} class="w-6 h-6 flex-grow-0" /> 
+            </a>
+            ))}
+        </div> 
     </div> 
 </footer>

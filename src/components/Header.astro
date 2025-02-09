@@ -16,13 +16,13 @@ const pages : [Page] = [
     {name: "Contact",  href: "/contactme"}
 ]
 
-const currentPath = Astro.url.pathname;
+const currentPath = Astro.url.pathname.split('/').slice(0, 2).join('/');
 const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500 via-violet-800 to-red-500 text-transparent bg-clip-text" : "bg-transparent");
 ---
-<header class="relative max-h-screen flex flex-col bg-sky-100">
-    <div class="max-w-screen flex flex-row items-center justify-between p-4">
+<header class="relative max-h-screen flex flex-col bg-sky-100 items-center">
+    <div class="max-w-[90ch] w-full flex flex-row items-center p-4 justify-between">
         <!-- logo -->
-        <div class="text-lg font-semibold">
+        <div class="text-lg font-semibold items-start">
             <a href={logo.href} class={indicator(logo) + "self-center text-2xl font-semibold whitespace-nowrap text-gray-700 bg-clip-text"}>{logo.name}</a>
         </div>
 
