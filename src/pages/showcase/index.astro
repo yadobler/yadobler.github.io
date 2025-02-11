@@ -3,23 +3,23 @@ import Layout from '@layouts/Layout.astro';
 import Card from '@components/Card.astro';
 import { type CollectionEntry,  getCollection } from 'astro:content';
 
-// Get all blog posts
-const allBlogPosts = await getCollection('blog');
+// Get all showcase posts
+const allShowcasePosts = await getCollection('showcase');
 // Filter out posts that are marked as `draft` or `unlist`.
-const visiblePosts = allBlogPosts.filter((post) => post.data.draft !== true && post.data.unlist !== true);
+const visiblePosts = allShowcasePosts.filter((post) => post.data.draft !== true && post.data.unlist !== true);
 // Sort the filtered posts by `pubDate`.
 const sortedPosts = visiblePosts.sort((a, b) => Number(new Date(b.data.pubDate)) - Number(new Date(a.data.pubDate)));
 ---
 
-<Layout title="Blog" description="Collection of my blog posts">
+<Layout title="Showcase" description="Collection of projects for showcase">
     <div class="flex flex-col w-dvw px-10 gap-4 grow">
         <h1>
-            My Blog posts
+            Showcase of My Projects!
         </h1>
 
         <div class="flex flex-row flex-wrap flex-shrink-0 flex-grow-0 justify-around gap-5 align-middle items-center max-w-prose self-center">
             {sortedPosts.map(b => (
-            <Card title={b.data.title} href=`/blog/${b.id}/` img={b.data.heroImage} >
+            <Card title={b.data.title} href={b.data.link} img={b.data.heroImage} >
                 <p>{b.data.description}</p>
             </Card>
             ))}
