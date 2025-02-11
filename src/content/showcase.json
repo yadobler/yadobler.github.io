@@ -18,14 +18,14 @@
     {
         "title": "YappingBot",
         "description": "Fun little Tasklist Chatbot for NUS CS2103T Individual Project, adhering to Interative Prototyping.",
-        "link": "YappingBot",
+        "link": "/YappingBot",
         "heroImage": "@assets/showcase/yappingbot.png",
         "pubDate": "2024-12-02"
     },
     {
         "title": "MediBase3",
         "description": "Patient addressbook aimed at Doctors for NUS CS2103T Team Project, to learn Team-based Software Development.",
-        "link": "Medibase3",
+        "link": "/Medibase3",
         "heroImage": "@assets/showcase/medibase3.png",
         "pubDate": "2024-12-02"
     },
@@ -39,7 +39,7 @@
     {
         "title": "Huntress CTF",
         "description": "A month of offensive CTFs and reverse engineering, courtesy of Huntress.",
-        "link": "blog/2024-11-26-huntress_ctf/",
+        "link": "/blog/2024-11-26-huntress_ctf/",
         "heroImage": "@content/blog/2024-11-26-Huntress_CTF/images/result.png",
         "pubDate": "2024-09-24"
     }
