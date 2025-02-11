@@ -4,7 +4,7 @@ Made with [*Astro*](https://docs.astro.build).
 
 [![Deploy to GitHub Pages](https://github.com/yadobler/yadobler.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/yadobler/yadobler.github.io/actions/workflows/deploy.yml)
 
-![./src/assets/showcase/website_preview.png][Screenshot of website]
+![Screenshot of website](./src/assets/showcase/website_preview.png)
 
 This is my first real HTML + CSS project with a framework (Astro).
 
