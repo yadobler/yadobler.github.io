@@ -13,13 +13,13 @@ console.log("Iterating all blog ids")
 console.log(allBlogPosts.map(p => (p.id)))
 ---
 
-<Layout title="Blog">
+<Layout title="Blog" description="Collection of my blog posts">
     <div class="flex flex-col w-dvw px-10 gap-4 grow">
         <h1>
             My Blog posts
         </h1>
 
-        <div class="flex flex-row flex-wrap flex-shrink-0 flex-grow-0 justify-around gap-5 align-middle items-center ">
+        <div class="flex flex-row flex-wrap flex-shrink-0 flex-grow-0 justify-around gap-5 align-middle items-center max-w-prose self-center">
             {sortedPosts.map(b => (
             <Card title={b.data.title} href=`/blog/${b.id}/` img={b.data.heroImage} >
                 <p>{b.data.description}</p>

@@ -19,7 +19,7 @@ const { Content } = await render(post);
 const { title, author, pubDate, modDate, heroImage, description, tags } = post.data;
 ---
 
-<Layout title={title}>
+<Layout title={title} description={description}>
     <div class="flex flex-col w-dvw px-2 gap-5">
         <h1>{title}</h1>
 
@@ -34,7 +34,7 @@ const { title, author, pubDate, modDate, heroImage, description, tags } = post.d
             </div>
             <div class="flex flex-row flex-wrap justify-center gap-2">
                 {tags.map((t: String) => (
-                <span class="bg-red-100 shadow-md">{t}</span>
+                <span class="bg-red-100 shadow-md rounded-xl p-2">{t}</span>
                 ))}
             </div>
         </div>
