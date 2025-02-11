@@ -9,7 +9,7 @@ interface Socials {
     logo: any;
 }
 
-const socials : [Socials] = [
+const socials : Socials[] = [
     {name:"Github", href: "https://github.com/Yadobler", logo: GithubIcon },
     {name:"Mail", href: "/contactme", logo: MailIcon },
     {name:"Linkedin", href: "https://www.linkedin.com/in/yuknavell/", logo: LinkedinIcon }
@@ -17,9 +17,9 @@ const socials : [Socials] = [
 
 const year = new Date().getFullYear()
 ---
-<footer class="relative max-h-screen flex flex-col bg-sky-100 items-center">
+<footer class="relative max-h-screen flex flex-col bg-neutral-700 items-center">
     <div class="max-w-[90ch] w-full flex flex-row items-center p-4 justify-between">
-        <div class="flex justify-center items-center">
+        <div class="flex justify-center items-center text-slate-100">
             © Yukna'vell {year}
         </div>
 

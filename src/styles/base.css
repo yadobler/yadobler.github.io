@@ -3,80 +3,52 @@
 @tailwind components;
 @tailwind utilities;
 
-@theme {
-    --color-*: initial;
-    --color-dark1: #161616;
-    --color-dark1: #262626;
-    --color-dark1: #393939;
-    --color-dark1: #525252;
-    --color-dark1: #dde1e6;
-    --color-dark1: #f2f4f8;
-    --color-dark1: #ffffff;
-    --color-dark1: #08bdba;
-    --color-dark1: #3ddbd9;
-    --color-dark1: #78a9ff;
-    --color-dark1: #ee5396;
-    --color-dark1: #33b1ff;
-    --color-dark1: #ff7eb6;
-    --color-dark1: #42be65;
-    --color-dark1: #be95ff;
-    --color-dark1: #82cfff;
-    --color-dark1: #131313;
-
-
-    --color-light1: #FFFFFF;
-    --color-light1: #FAFAFA;
-    --color-light1: #ECEFF1;
-    --color-light1: #161616;
-    --color-light1: #37474F;
-    --color-light1: #90A4AE;
-    --color-light1: #525252;
-    --color-light1: #08bdba;
-    --color-light1: #ff7eb6;
-    --color-light1: #ee5396;
-    --color-light1: #FF6F00;
-    --color-light1: #0f62fe;
-    --color-light1: #673AB7;
-    --color-light1: #42be65;
-    --color-light1: #be95ff;
-    --color-light1: #FFAB91;
-    --color-light1: #FAFAFA;
-
-}
 
 @layer base {
     h1 {
-        @apply bg-green-100;
+        @apply text-neutral-900;
+        @apply bg-pink-400;
         @apply font-medium;
-        @apply shadow-md;
         @apply self-center;
         @apply text-center;
-        @apply text-4xl;
         @apply p-2;
+        @apply text-4xl;
     }
     
     h2 {
-        @apply bg-blue-100;
+        @apply text-neutral-700;
+        @apply bg-sky-300;
         @apply font-medium;
-        @apply shadow-md;
-        @apply text-xl;
+        @apply self-center;
+        @apply text-center;
+        @apply text-2xl;
         @apply p-2;
     }
     
     h3 {
-        @apply bg-transparent;
+        @apply text-neutral-700;
+        @apply bg-teal-500;
         @apply font-medium;
-        @apply text-justify;
+        @apply self-center;
+        @apply text-center;
         @apply text-lg;
+        @apply p-2;
     }
 
     p {
         @apply text-justify;
+        @apply text-slate-300;
+        max-width: 70ch;
+    }
+    
+    b {
+        @apply text-justify;
+        @apply text-slate-100;
         max-width: 70ch;
     }
 
     a {
-        @apply text-blue-700;
+        @apply text-sky-500;
     }
 
     ul {
@@ -86,15 +58,57 @@
         @apply list-outside; 
         @apply self-stretch;
         @apply m-2;
+        @apply text-slate-300;
     }
 
     li {
         @apply mb-2; /* Add some spacing between list items */
         max-width: 70ch;
+        @apply text-slate-300;
     }
 
     img {
         @apply shadow-md;
         @apply rounded-xl;
     }
+
+    input[type="checkbox"] {
+        @apply text-pink-400;
+    }
 }
+
+/*
+     #161616  neutral-900
+     #262626  neutral-800
+     #393939  neutral-700
+     #525252  neutral-600
+     #dde1e6  gray-200
+     #f2f4f8  slate-100
+     #ffffff  white
+     #08bdba  teal-500
+     #3ddbd9  teal-400
+     #78a9ff  blue-400
+     #ee5396  pink-500
+     #33b1ff  sky-500
+     #ff7eb6  pink-400
+     #42be65  green-500
+     #be95ff  purple-400
+     #82cfff  sky-300
+
+"#FFFFFF" white
+"#FAFAFA" zinc-50
+"#ECEFF1" gray-100
+"#161616" neutral-900
+"#37474F" gray-700
+"#90A4AE" gray-400
+"#525252" neutral-600
+"#08bdba" teal-500
+"#ff7eb6" pink-400
+"#ee5396" pink-500
+"#FF6F00" orange-500
+"#0f62fe" blue-600
+"#673AB7" violet-700
+"#42be65" green-500
+"#be95ff" purple-400
+"#FFAB91" red-300
+*/
