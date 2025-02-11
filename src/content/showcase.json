@@ -1,16 +1,48 @@
 [
-  {
-    "title": "My Project",
-    "description": "A cool project.",
-    "link": "https://example.com",
-    "pubDate": "2024-02-10"
-  },
-  {
-    "title": "Another Project",
-    "id": "test",
-    "description": "An awesome project.",
-    "link": "https://example.com/another",
-    "pubDate": "2024-02-09"
-  }
+    {
+        "title": "z.string()",
+        "description": "z.string()",
+        "link": "z.string()",
+        "heroImage": "image().optional()",
+        "pubDate": "2000-05-19",
+        "unlist": true,
+        "draft": true
+    },
+    {
+        "title": "Main Website",
+        "description": "This site is also a way for me to learn static site generation and JSX frameworks!",
+        "link": "https://www.github.com/yadobler/yadobler.github.io",
+        "heroImage": "@assets/showcase/website_preview.png",
+        "pubDate": "2024-12-02"
+    },
+    {
+        "title": "YappingBot",
+        "description": "Fun little Tasklist Chatbot for NUS CS2103T Individual Project, adhering to Interative Prototyping.",
+        "link": "YappingBot",
+        "heroImage": "@assets/showcase/yappingbot.png",
+        "pubDate": "2024-12-02"
+    },
+    {
+        "title": "MediBase3",
+        "description": "Patient addressbook aimed at Doctors for NUS CS2103T Team Project, to learn Team-based Software Development.",
+        "link": "Medibase3",
+        "heroImage": "@assets/showcase/medibase3.png",
+        "pubDate": "2024-12-02"
+    },
+    {
+        "title": "Dotfiles",
+        "description": "Dotfiles based around NixOS (and Arch on another branch).",
+        "link": "https://github.com/yadobler/dotfiles-2",
+        "heroImage": "@assets/showcase/dotfiles.png",
+        "pubDate": "2999-01-02"
+    },
+    {
+        "title": "Huntress CTF",
+        "description": "A month of offensive CTFs and reverse engineering, courtesy of Huntress.",
+        "link": "blog/2024-11-26-huntress_ctf/",
+        "heroImage": "@content/blog/2024-11-26-Huntress_CTF/images/result.png",
+        "pubDate": "2024-09-24"
+    }
+
 ]
 
