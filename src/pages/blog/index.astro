@@ -9,8 +9,6 @@ const allBlogPosts = await getCollection('blog');
 const visiblePosts = allBlogPosts.filter((post) => post.data.draft !== true && post.data.unlist !== true);
 // Sort the filtered posts by `pubDate`.
 const sortedPosts = visiblePosts.sort((a, b) => Number(new Date(b.data.pubDate)) - Number(new Date(a.data.pubDate)));
-console.log("Iterating all blog ids")
-console.log(allBlogPosts.map(p => (p.id)))
 ---
 
 <Layout title="Blog" description="Collection of my blog posts">
