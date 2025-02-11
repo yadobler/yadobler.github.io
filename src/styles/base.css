@@ -3,6 +3,47 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+    --color-*: initial;
+    --color-dark1: #161616;
+    --color-dark1: #262626;
+    --color-dark1: #393939;
+    --color-dark1: #525252;
+    --color-dark1: #dde1e6;
+    --color-dark1: #f2f4f8;
+    --color-dark1: #ffffff;
+    --color-dark1: #08bdba;
+    --color-dark1: #3ddbd9;
+    --color-dark1: #78a9ff;
+    --color-dark1: #ee5396;
+    --color-dark1: #33b1ff;
+    --color-dark1: #ff7eb6;
+    --color-dark1: #42be65;
+    --color-dark1: #be95ff;
+    --color-dark1: #82cfff;
+    --color-dark1: #131313;
+
+
+    --color-light1: #FFFFFF;
+    --color-light1: #FAFAFA;
+    --color-light1: #ECEFF1;
+    --color-light1: #161616;
+    --color-light1: #37474F;
+    --color-light1: #90A4AE;
+    --color-light1: #525252;
+    --color-light1: #08bdba;
+    --color-light1: #ff7eb6;
+    --color-light1: #ee5396;
+    --color-light1: #FF6F00;
+    --color-light1: #0f62fe;
+    --color-light1: #673AB7;
+    --color-light1: #42be65;
+    --color-light1: #be95ff;
+    --color-light1: #FFAB91;
+    --color-light1: #FAFAFA;
+
+}
+
 @layer base {
     h1 {
         @apply bg-green-100;
