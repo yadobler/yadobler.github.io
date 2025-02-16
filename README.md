@@ -110,3 +110,4 @@ All commands are run from the root of the project, from a terminal:
 - [Gentlecons Interface Icons Collection](https://www.svgrepo.com/collection/gentlecons-interface-icons/) for social icons
 - [Astro docs](https://docs.astro.build/)
 - ChatGPT for debugging, really!
+- [textintoimages](https://textintoimages.com/)

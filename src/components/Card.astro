@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 ---
 <a href={href} class="max-w-[90ch] p-5">
     <div class="flex flex-shrink flex-col p-2 gap-2 justify-around items-stretch shadow-md bg-red-100 text-black rounded-xl">
-        <div> {img && <Image src={img} alt=`Image of {title}` class="shadow:md" />} </div>
+        <div class="self-center" > {img && <Image src={img} alt=`Image of {title}` class="shadow:md" />} </div>
         <h2 class="p-2 rounded-xl text-center">{title}</h2>
         <div class="text-justify text-wrap overflow-ellipsis line-clamp-5 p-2">
             <slot />

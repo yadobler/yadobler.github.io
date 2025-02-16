@@ -12,7 +12,7 @@ function furigana(hanzi: string, jyutping: string) {
   const characters = hanzi.split(""); // Splits Hanzi into individual characters
   const annotations = jyutping.split(" "); // Splits Jyutping into annotations
   if (characters.length !== annotations.length) {
-    throw new Error("Hanzi and Jyutping lengths must match!");
+        throw new Error("Hanzi and Jyutping lengths must match!\nHanzi: " + hanzi + "\nJyutping: " + jyutping);
   }
   return characters.map((char, i) => ({ char, annotation: annotations[i] }));
 }
