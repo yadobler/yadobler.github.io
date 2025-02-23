@@ -17,7 +17,7 @@
     },
     {
         "title": "YappingBot",
-        "description": "Fun little Tasklist Chatbot for NUS CS2103T Individual Project, adhering to Interative Prototyping.",
+        "description": "Fun little Tasklist Chatbot for NUS CS2103T Individual Project, adhering to Iterative Prototyping.",
         "link": "/YappingBot",
         "heroImage": "@assets/showcase/yappingbot.png",
         "pubDate": "2024-12-02"
