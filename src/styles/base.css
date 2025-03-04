@@ -1,59 +1,49 @@
-/* The integration's default injected base.css file */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    h1 {
-        @apply bg-green-100;
-        @apply font-medium;
-        @apply shadow-md;
-        @apply self-center;
-        @apply text-center;
-        @apply text-4xl;
-        @apply p-2;
-    }
-    
-    h2 {
-        @apply bg-blue-100;
-        @apply font-medium;
-        @apply shadow-md;
-        @apply text-xl;
-        @apply p-2;
-    }
-    
-    h3 {
-        @apply bg-transparent;
-        @apply font-medium;
-        @apply text-justify;
-        @apply text-lg;
-    }
-
-    p {
-        @apply text-justify;
-        max-width: 70ch;
+    /* General text styles */
+    p, li {
+        @apply text-gray-800 dark:text-gray-200 text-lg leading-relaxed;
     }
 
     a {
-        @apply text-blue-700;
+        @apply text-primary hover:text-primary-dark no-underline;
     }
 
+    /* Heading styles */
+    h1, h2, h3 {
+        @apply font-medium text-primary dark:text-primary-light;
+    }
+
+    h1 {
+        @apply text-4xl text-center py-4 bg-primary-light dark:bg-primary-dark rounded-xl shadow-md;
+    }
+
+    h2 {
+        @apply text-3xl py-3 bg-secondary-light dark:bg-secondary-dark text-center rounded-md shadow-md;
+    }
+
+    h3 {
+        @apply text-2xl py-2 bg-tertiary-light dark:bg-tertiary-dark rounded-md shadow-md;
+    }
+
+    /* List and image styles */
     ul {
-        /* Apply list-disc for bullet points and pl-4 for padding */
-        @apply list-disc; 
-        @apply pl-4; 
-        @apply list-outside; 
-        @apply self-stretch;
-        @apply m-2;
+        @apply list-disc pl-6 m-4;
     }
 
     li {
-        @apply mb-2; /* Add some spacing between list items */
-        max-width: 70ch;
+        @apply mb-2;
     }
 
     img {
-        @apply shadow-md;
-        @apply rounded-xl;
+        @apply shadow-md rounded-lg max-w-full;
+    }
+
+    /* Ensure text is justified when needed */
+    .prose {
+        @apply max-w-prose text-justify;
     }
 }
