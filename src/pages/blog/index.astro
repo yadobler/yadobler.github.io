@@ -12,7 +12,6 @@ const sortedPosts = visiblePosts.sort((a, b) => Number(new Date(b.data.pubDate))
 ---
 
 <Layout title="Blog" description="Collection of my blog posts">
-    <div class="flex flex-col w-dvw px-10 gap-4 grow">
         <h1>
             My Blog posts
         </h1>
@@ -24,5 +23,4 @@ const sortedPosts = visiblePosts.sort((a, b) => Number(new Date(b.data.pubDate))
             </Card>
             ))}
         </div>
-    </div>
 </Layout>

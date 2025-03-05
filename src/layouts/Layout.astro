@@ -1,6 +1,7 @@
 ---
 import Header from '@components/Header.astro';
 import Footer from '@components/Footer.astro';
+import Prose from '@components/Prose.astro'
 import '@styles/base.css';
 
 interface Props {
@@ -13,16 +14,20 @@ const { title, description = "Yukna's Blog" } = Astro.props;
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <meta name="description" content={description} />
         <title>{title} | Yadobler Blog</title>
     </head>
-    <body class="bg-gray-100 flex flex-col gap-5 min-h-dvh">
+    <body class="bg-primary-bg-light dark:bg-primary-bg-dark text-primary-fg-light dark:text-primary-fg-dark flex flex-col gap-5 min-h-screen">
         <Header />
-        <main class="flex flex-1 justify-center w-full">
-            <slot />
+        <main class="flex flex-1 justify-center w-full px-4 py-8 items-center">
+            <div class="flex flex-col w-dvw px-10 gap-4 flex-grow items-center">
+                <Prose>
+                    <slot />
+                </Prose>
+            </div>
         </main>
         <Footer />
     </body>
