@@ -2,12 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
     /* General text styles */
     p, li {
         @apply text-primary-fg-light dark:text-primary-fg-dark text-lg leading-relaxed;
+    }
+
+    b {
+        @apply text-bold-light dark:text-bold-dark
+    }
+    
+    code {
+        @apply text-code-light dark:text-code-dark
     }
 
     a {

@@ -24,10 +24,21 @@ export default {
                 "link-dark": "#33b1ff", 
                 "hover-light": "#be95ff",
                 "link-light": "#0f62fe",
+                "bold-dark": "#98fbf9",
+                "bold-light": "#068e8c",
+                "code-dark": "#f7b0cf",
+                "code-light": "#6b0b34",
             },
             typography: {
                 DEFAULT: {
                     css: {
+                        b: {
+                            color: "var(--bold-light)"
+                        },
+                        code: {
+                            color: "var(--code-light)"
+                        },
+
                         h1: { 
                             color: "var(--secondary-fg-light)", 
                             fontWeight: "600",
@@ -65,6 +76,12 @@ export default {
                 },
                 dark: {
                     css: {
+                        b: {
+                            color: "var(--bold-dark)"
+                        },
+                        code: {
+                            color: "var(--code-dark)"
+                        },
                         h1: { 
                             color: "var(--secondary-fg-dark)", 
                             fontWeight: "600",

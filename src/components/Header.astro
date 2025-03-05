@@ -23,20 +23,20 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
     <div class="max-w-[90ch] w-full flex flex-row items-center p-4 justify-between">
         <!-- logo -->
         <div class="text-lg font-semibold items-start">
-            <a href={logo.href} class={indicator(logo) + "self-center text-2xl font-semibold whitespace-nowrap text-gray-700 bg-clip-text"}>{logo.name}</a>
+            <a href={logo.href} class={indicator(logo) + "self-center text-2xl font-semibold whitespace-nowrap text-primary-fg-light dark:text-primary-fg-dark bg-clip-text"}>{logo.name}</a>
         </div>
 
         <!-- wide screen navbar -->
         <nav class="hidden sm:flex sm:flex-row text-lg gap-4">
             {pages.map(page => (
-            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
+            <a href={page.href} class={indicator(page) + " text-primary-fg-light dark:text-primary-fg-dark"}>{page.name}</a>
             ))}
         </nav>
 
         <!-- toggle navbar -->
         <div id="toggle-navmenu" class="sm:hidden">
-            <span id="menu-open" class="text-xl"> <OpenIcon /> </span>
-            <span id="menu-close" class="hidden text-xl"> <CloseIcon /> </span>
+            <span id="menu-open" class="text-xl fill-current text-primary-fg-light dark:text-primary-fg-dark"> <OpenIcon /> </span>
+            <span id="menu-close" class="hidden text-xl fill-current text-primary-fg-light dark:text-primary-fg-dark"> <CloseIcon /> </span>
         </div>
     </div>
 
@@ -44,7 +44,7 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
     <div id="mobile-menu" class="hidden absolute top-full right-0 h-max bg-white shadow-md z-50">
         <nav class="flex flex-col items-end text-lg gap-4 p-4">
             {pages.map(page => (
-            <a href={page.href} class={indicator(page) + " text-gray-700"}>{page.name}</a>
+            <a href={page.href} class={indicator(page) + " text-primary-fg-light dark:text-primary-fg-dark"}>{page.name}</a>
             ))}
         </nav>
     </div>

@@ -26,7 +26,10 @@ const year = new Date().getFullYear()
         <div class="flex justify-center items-center gap-4 flex-wrap">
             {socials.map(s => (
             <a href={s.href} class="flex items-center gap-2" key={s.name}>
-                <s.logo title={s.name} class="w-6 h-6 flex-grow-0 hover:shadow-2xl hover:shadow-primary" /> 
+                <s.logo 
+                    title={s.name} 
+                    class="w-6 h-6 flex-grow-0 hover:shadow-2xl hover:shadow-primary fill-current text-primary-fg-light dark:text-primary-fg-dark" 
+                /> 
             </a>
             ))}
         </div> 
