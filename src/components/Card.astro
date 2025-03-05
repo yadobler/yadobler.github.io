@@ -2,13 +2,22 @@
 const { title, href, img } = Astro.props;
 import { Image } from 'astro:assets';
 ---
-<a href={href} class="max-w-[90ch] p-5">
-    <div class="flex flex-shrink flex-col p-2 gap-2 justify-around items-stretch shadow-md bg-red-100 text-black rounded-xl">
-        <div class="self-center w-full aspect-[16/9] overflow-hidden rounded-xl">
-            {img && <Image src={img} alt={`Image of ${title}`} class="w-full h-full object-cover shadow-md" />}
+<a href={href} class="block max-w-[90ch] p-3 transition-transform transform hover:scale-[1.02] not-prose w-full">
+    <div class="flex flex-col p-3 gap-2 shadow-md bg-secondary-bg-light dark:bg-secondary-bg-dark text-primary-fg-light dark:text-primary-fg-dark rounded-lg transition-colors hover:bg-tertiary-bg-light dark:hover:bg-tertiary-bg-dark">
+        <!-- Image -->
+        {img && (
+        <div class="w-full aspect-video overflow-hidden rounded-md shadow-sm">
+            <Image src={img} alt={`Image of ${title}`} class="w-full h-full object-cover" />
         </div>
-        <h2 class="p-2 rounded-xl text-center">{title}</h2>
-        <div class="text-justify text-wrap overflow-ellipsis line-clamp-5 p-2">
+        )}
+
+        <!-- Title -->
+        <h2 class="text-2xl font-semibold text-center bg-gray-200 dark:bg-gray-800 p-1 m-0 rounded-md">
+            {title}
+        </h2>
+
+        <!-- Description -->
+        <div class="text-sm text-justify overflow-hidden line-clamp-3 p-1">
             <slot />
         </div>
     </div>

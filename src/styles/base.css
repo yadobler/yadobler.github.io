@@ -1,59 +1,50 @@
-/* The integration's default injected base.css file */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    h1 {
-        @apply bg-green-100;
-        @apply font-medium;
-        @apply shadow-md;
-        @apply self-center;
-        @apply text-center;
-        @apply text-4xl;
-        @apply p-2;
-    }
-    
-    h2 {
-        @apply bg-blue-100;
-        @apply font-medium;
-        @apply shadow-md;
-        @apply text-xl;
-        @apply p-2;
-    }
-    
-    h3 {
-        @apply bg-transparent;
-        @apply font-medium;
-        @apply text-justify;
-        @apply text-lg;
-    }
+@custom-variant dark (&:where(.dark, .dark *));
 
-    p {
-        @apply text-justify;
-        max-width: 70ch;
+@layer base {
+    /* General text styles */
+    p, li {
+        @apply text-primary-fg-light dark:text-primary-fg-dark text-lg leading-relaxed;
     }
 
     a {
-        @apply text-blue-700;
+        @apply text-link-light hover:text-hover-light no-underline dark:text-link-dark dark:hover:text-hover-dark;
     }
 
+    /* Heading styles */
+    h1, h2, h3, h4 {
+        @apply font-medium text-center rounded-xl shadow-md px-5;
+    }
+
+    h1 {
+        @apply text-4xl py-4 bg-secondary-bg-light dark:bg-secondary-bg-dark text-secondary-fg-light dark:text-secondary-fg-dark;
+    }
+
+    h2 {
+        @apply text-3xl py-3 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
+    }
+
+    h3 {
+        @apply text-2xl py-2 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
+    }
+    
+    h4 {
+        @apply text-xl py-1 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
+    }
+
+    /* List and image styles */
     ul {
-        /* Apply list-disc for bullet points and pl-4 for padding */
-        @apply list-disc; 
-        @apply pl-4; 
-        @apply list-outside; 
-        @apply self-stretch;
-        @apply m-2;
+        @apply list-disc pl-6 m-4;
     }
 
     li {
-        @apply mb-2; /* Add some spacing between list items */
-        max-width: 70ch;
+        @apply mb-2;
     }
 
     img {
-        @apply shadow-md;
-        @apply rounded-xl;
+        @apply shadow-md rounded-lg max-w-full;
     }
 }

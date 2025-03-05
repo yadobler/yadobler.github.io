@@ -17,7 +17,7 @@ const socials : [Socials] = [
 
 const year = new Date().getFullYear()
 ---
-<footer class="relative max-h-screen flex flex-col bg-sky-100 items-center">
+<footer class="relative max-h-screen flex flex-col bg-secondary-bg-light dark:bg-secondary-bg-dark items-center">
     <div class="max-w-[90ch] w-full flex flex-row items-center p-4 justify-between">
         <div class="flex justify-center items-center">
             © Yukna'vell {year}
@@ -26,7 +26,7 @@ const year = new Date().getFullYear()
         <div class="flex justify-center items-center gap-4 flex-wrap">
             {socials.map(s => (
             <a href={s.href} class="flex items-center gap-2" key={s.name}>
-                <s.logo title={s.name} class="w-6 h-6 flex-grow-0" /> 
+                <s.logo title={s.name} class="w-6 h-6 flex-grow-0 hover:shadow-2xl hover:shadow-primary" /> 
             </a>
             ))}
         </div> 

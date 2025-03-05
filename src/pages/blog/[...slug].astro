@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
-import Prose from '@components/Prose.astro';
 import Layout from '@layouts/Layout.astro';
 import FormattedDate from '@components/FormattedDate.astro';
 
@@ -20,31 +19,25 @@ const { title, author, pubDate, modDate, heroImage, description, tags } = post.d
 ---
 
 <Layout title={title} description={description}>
-    <div class="flex flex-col w-dvw px-2 gap-5">
-        <h1>{title}</h1>
-
-        <div class="grid grid-rows-2 justify-around">
-            <div class="grow text-center">
-                By: {author} on <FormattedDate date={pubDate} />
-                {modDate && (
-                <span class="text-gray-600"> 
-                    ( Updated: <FormattedDate date={modDate} />)
-                </span>
-                )}
-            </div>
-            <div class="flex flex-row flex-wrap justify-center gap-2">
-                {tags.map((t: String) => (
-                <span class="bg-red-100 shadow-md rounded-xl p-2">{t}</span>
-                ))}
-            </div>
+    <h1>{title}</h1>
+    <div class="grid grid-rows-2 justify-around">
+        <div class="grow text-center">
+            By: {author} on <FormattedDate date={pubDate} />
+            {modDate && (
+            <span class="text-gray-600"> 
+                ( Updated: <FormattedDate date={modDate} />)
+            </span>
+            )}
         </div>
-
-        <div class="flex flex-col justify-center items-center">
-            <Prose>
-                <div> {heroImage && <Image src={heroImage} alt={description} class="shadow:md" />} </div>
-                <div class="px-5"> <Content /> </div>
-            </Prose>
+        <div class="flex flex-row flex-wrap justify-center gap-2">
+            {tags.map((t: String) => (
+            <span class="bg-red-100 shadow-md rounded-xl p-2">{t}</span>
+            ))}
         </div>
+    </div>
 
+    <div class="flex flex-col justify-center">
+        <div> {heroImage && <Image src={heroImage} alt={description} class="shadow:md w-full" />} </div>
+        <div class="px-5"> <Content /> </div>
     </div>
 </Layout>
