@@ -85,24 +85,27 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-    const themeToggle = document.getElementById("theme-toggle");
-    const htmlElement = document.documentElement;
+        const themeToggles = document.querySelectorAll("#theme-toggle"); // Select all toggle buttons
+        const htmlElement = document.documentElement;
 
-    // Set theme based on system preference or saved user choice
-    const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        // Set theme based on system preference or saved user choice
+        const storedTheme = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-    if (storedTheme) {
-        htmlElement.classList.toggle("dark", storedTheme === "dark");
-    } else {
-        htmlElement.classList.toggle("dark", prefersDark);
-    }
+        if (storedTheme) {
+            htmlElement.classList.toggle("dark", storedTheme === "dark");
+        } else {
+            htmlElement.classList.toggle("dark", prefersDark);
+        }
 
-    // Toggle theme on button click
-    themeToggle.addEventListener("click", () => {
-        const isDark = htmlElement.classList.toggle("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "light");
+        // Function to toggle theme
+        function toggleTheme() {
+            const isDark = htmlElement.classList.toggle("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        }
+
+        // Add event listener to both toggle buttons (wide-screen + mobile menu)
+        themeToggles.forEach(btn => btn.addEventListener("click", toggleTheme));
     });
-});
     </script>
 </header>
