@@ -1,6 +1,8 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import MenuIcon from '@assets/icons/menu.svg'
+import SunIcon from "@assets/icons/sun.svg";
+import MoonIcon from "@assets/icons/moon.svg";
 ---
 
 <Layout title="Hello" description="Landing home page">
@@ -15,6 +17,7 @@ import MenuIcon from '@assets/icons/menu.svg'
         <li><b>[Blog]</b>: A listing of blogs and writeups.</li>
         <li><b>[Showcase]</b>: A curated list of projects I have done (like this site!).</li>
         <li><b>[Contact]</b>: A contact form if you'd like to correspond with me.</li>
+        <li><b><SunIcon class="w-8 h-8 text-primary-fg-light dark:text-primary-fg-dark inline"/> and <MoonIcon class="w-8 h-8 text-primary-fg-light dark:text-primary-fg-dark inline"/></b>: Toggle dark mode and light mode.</li>
         <li class="font-bold">Likewise the icons below are links to my social sites.</li>
     </ul>
     <p>
