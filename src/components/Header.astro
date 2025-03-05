@@ -1,6 +1,8 @@
 ---
 import OpenIcon from "@assets/icons/menu.svg";
 import CloseIcon from "@assets/icons/close.svg";
+import SunIcon from "@assets/icons/sun.svg";
+import MoonIcon from "@assets/icons/moon.svg";
 
 interface Page {
     name: string;
@@ -31,18 +33,32 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
             {pages.map(page => (
             <a href={page.href} class={indicator(page) + " text-primary-fg-light dark:text-primary-fg-dark"}>{page.name}</a>
             ))}
+            <!-- Dark Mode Toggle -->
+            <button id="theme-toggle" class="w-8 h-8 flex items-center justify-center text-primary-fg-light dark:text-primary-fg-dark">
+                <span id="theme-icon">
+                    <MoonIcon class="hidden dark:block w-6 h-6" />
+                    <SunIcon class="block dark:hidden w-6 h-6" />
+                </span>
+            </button>
         </nav>
 
         <!-- toggle navbar -->
-        <div id="toggle-navmenu" class="sm:hidden">
+        <div id="toggle-navmenu" class="flex flex-row sm:hidden">
             <span id="menu-open" class="text-xl fill-current text-primary-fg-light dark:text-primary-fg-dark"> <OpenIcon /> </span>
             <span id="menu-close" class="hidden text-xl fill-current text-primary-fg-light dark:text-primary-fg-dark"> <CloseIcon /> </span>
         </div>
     </div>
 
     <!-- small screen navbar -->
-    <div id="mobile-menu" class="hidden absolute top-full right-0 h-max bg-white shadow-md z-50">
+    <div id="mobile-menu" class="hidden absolute top-full right-0 h-max shadow-md z-50 bg-secondary-bg-light dark:bg-secondary-bg-dark">
         <nav class="flex flex-col items-end text-lg gap-4 p-4">
+            <!-- Dark Mode Toggle -->
+            <button id="theme-toggle" class="w-8 h-8 flex items-center justify-center text-primary-fg-light dark:text-primary-fg-dark">
+                <span id="theme-icon">
+                    <MoonIcon class="hidden dark:block w-6 h-6" />
+                    <SunIcon class="block dark:hidden w-6 h-6" />
+                </span>
+            </button>
             {pages.map(page => (
             <a href={page.href} class={indicator(page) + " text-primary-fg-light dark:text-primary-fg-dark"}>{page.name}</a>
             ))}
@@ -67,5 +83,26 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
             menuClose.classList.toggle("hidden", isMenuVisible);
         });
     });
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const themeToggle = document.getElementById("theme-toggle");
+    const htmlElement = document.documentElement;
+
+    // Set theme based on system preference or saved user choice
+    const storedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (storedTheme) {
+        htmlElement.classList.toggle("dark", storedTheme === "dark");
+    } else {
+        htmlElement.classList.toggle("dark", prefersDark);
+    }
+
+    // Toggle theme on button click
+    themeToggle.addEventListener("click", () => {
+        const isDark = htmlElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+});
     </script>
 </header>
