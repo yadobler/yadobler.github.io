@@ -1,0 +1,1847 @@
+---
+title: "Assignment 1 CTF - CS2107 Information Security"
+author: "Yukna"
+pubDate: 2025-02-17
+modDate: 2025-04-02
+description: "Writeup of Assignment 1 CTF challenge for NUS CS2107 Information Security Course"
+heroImage: "../../assets/cs2107-assignment-01/2.png"
+tags: 
+    - NUS
+    - CS2107
+    - InfoSec
+    - CyberSec
+    - Cryptography 
+    - Ciphers
+    - CTF 
+unlist: False
+draft: False
+---
+
+# What is this?
+
+Recently I completed and received the results of my 1st CTF of National University of Singapore (NUS) CS2107 Information Security course. This assignment particularly focuses on the security aspects of crypto and ciphers, particularly how every *bolt* of this mechanism plays a part and cutting one might completely render the whole entire security obsolete.
+
+Honestly, it was very fun! I think this has taught me more on how we cannot blindly trust encryption just because it is industry standards - we need to use them properly. It reminds me of those tiktok/vine videos of people bolting their door shut with a slide bolt, only for the door to slide open instead of being unable to swing open. 
+
+https://www.youtube.com/shorts/a4jnXOixrxk
+
+I actually was addicted to this and neglected to complete my other assignments... :sad:
+
+# Preface
+
+All assignments were done using an ephemeral nix-shell with the following config (Note - this is **not recommended** when doing CTFs because accidentally running any programme or script is *a great way to have a bad day*):
+
+```nix 
+{ pkgs ? import <nixpkgs> {} }:
+pkgs.mkShell {
+  buildInputs = with pkgs; [
+    gcc
+    hexdump
+    file
+    (python3.withPackages (ps: with ps; with python3Packages; [
+      bpython
+      pwntools
+      pycryptodome
+      python-dotenv
+      # randcrack
+      (
+        buildPythonPackage rec {
+          pname = "randcrack";
+          version = "0.2.0";
+          src = fetchPypi {
+            inherit pname version;
+            sha256 = "sha256-zM9OzeoUdmZTDwgm0Rpyv8lnzNerNuLt+alR3nwHAhs=";
+          };
+          doCheck = false;
+        }
+      )
+    ]))
+  ];
+}
+```
+
+The python version is as followed: `Python 3.12.8`
+
+
+The gcc version is as followed: 
+
+```text
+╰─❯ gcc -v
+Using built-in specs.
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+Supported LTO compression algorithms: zlib
+gcc version 14.2.1 20241116 (GCC) 
+```
+
+# Easy Challenges
+
+## E.1 Emoji Lang
+
+Prompt:
+
+```text
+Author: Jonathan Loh
+
+Happy birthday! Here's a message written using our favorite emoji lang! As 
+    usual, each emoji maps 
+    to a letter!
+
+😘😀🤢🤢😍 🤩😋😵😂😘😬😀😍!! 😘😊🤢😉 😍😊😭😵 😬😀😍’😱 🤫😭🤬🤬 😊🤫 😁😊
+    😊😬 🤮😋🤩😉😱, 😁😊😊😬 🤫😊😊😬, 😀😇😬 😀🤬🤬 😂😘😉 😂😘😋😇😁😱 😍😊
+    😭 🤬😊🤮😉. 😍😊😭 😬😉😱😉😵🤮😉 😂😘😉 🤩😉😱😂, 😱😊 🥰😀🥶😉 😱😭😵😉 
+    😂😊 😂😵😉😀😂 😍😊😭😵😱😉🤬🤫 (😀😇😬 😉😀😂 😉🥳😂😵😀 🥵😀🥶😉 🤫😊😵 
+    🥰😉 🤬😊🤬). 😀🤬😱😊, 😘😉😵😉’😱 😂😊 🥵😉🤬😉🤩😵😀😂😋😇😁 😂😘😉 😱😉
+    🥵😵😉😂 🤬😀😇😁😭😀😁😉 🧐😉 😭😱😉 😂😊 😂😀🤬🥶 😂😊 😉😀🥵😘 😊😂😘😉
+    😵 😉🤮😉😵😍 😬😀😍. 😋😂 🥰😀🥶😉😱 😉🤮😉😵😍😂😘😋😇😁 😱😊 🥰😭🥵😘 🥰
+    😊😵😉 🤫😭😇 😀😇😬 🤫😉😉🤬😱 🤬😋🥶😉 😊😭😵😊🧐😇 🤬😋😂😂🤬😉 🥵😊😬😉
+    . 🥵😘😉😉😵😱 😂😊 😀😇😊😂😘😉😵 😍😉😀😵 😊🤫 🤬😀😭😁😘😱, 😀😬🤮😉😇😂
+    😭😵😉😱, 😀😇😬 😵😀😇😬😊🥰 😱😘😉😇😀 😇😋😁😀😇😱. 🤬😉😂’😱 🥵😉🤬😉🤩
+    😵😀😂😉 😱😊😊😇!
+
+🥵😱🤨🤯🤪🤑{😱🥶😋🤩😋😬😋_😉🥰😊😮😋_🤬😀😇😁😭😀😁😉_😁😊_🤩😵😵😵😵😵😵}
+```
+
+This is a 1-to-1 substitution cipher. I was initially inclined to analyse the frequency of the emoji cipher and map them to the known frequency distribution of English, but if the message is written with _liberty_ then it might not provide the correct frequency.
+
+However, I noticed two things:
+
+1. There were two-letter and three-letter words which could only belong to a finite number of English words
+2. The message is definitely _Birthday_ themed.
+
+Therefore I first saw a string that matched the character distribution of *Happy Birthday* I put them in a `Dict[str,str]` in python where the key (emoji) maps to the value of the corresponding message. There were duplicate keys, which corresponds to the duplicate _p_, _a_, _h_ and _y_ in _happy birthday_.
+
+![Birthday](@assets/cs2107-assignment-01/E.1/20250213-111517-original.png)
+
+
+I then loop through each character and if there exist a key-pair value, I append the associated charater into a new result string. Else append the cipher character itself.
+
+```py
+message = ""
+for c in cipher:
+    if c in dictionary:
+        message += dictionary[c]
+    else:
+        message += c
+print(message)
+```
+
+At the first iteration, there is still a lot needed to be deciphered.
+
+![First Iteration](@assets/cs2107-assignment-01/E.1/20250213-111620-original.png)
+
+It however gave much clues, and I continued to decipher the emojis that replaced obvious characters in certain words. For example:
+
+![Another Year On](@assets/cs2107-assignment-01/E.1/20250213-111733-original.png)
+
+This continued for serveral iterations. However, other than looking at the undeciphered characters, I was also looking at whether the deciphered ones were correct. I realised some mistakes I did. I did not recognise any words ending with _UAA_ or _AAA_:
+
+![Mistakes](@assets/cs2107-assignment-01/E.1/20250213-111923-original.png)
+
+I realised that the _AAA_ mapped to `😀🤬🤬`, meaning I accidentally mapped two emojis to the same character _A_. I guessed this was supposed to be _ALL_, so I went to check and sure enough it was keyed in wrongly. 
+
+![Wrong A](@assets/cs2107-assignment-01/E.1/20250213-112106-original.png)
+
+I changed it to _L_ and try again. I noticed another issue, where the _G_ became _T_ leading to _THINT_. 
+
+![Wrong T](@assets/cs2107-assignment-01/E.1/20250213-112601-original.png)
+
+I fix that and was left with 5 more characters:
+
+![2107 Emoji](@assets/cs2107-assignment-01/E.1/20250213-112655-original.png)
+
+The last charater is _J_ in _EMOJI_, which interestingly did not appear anywhere else. The first four, had to be _2107_ since it would yield the format of the key as described in the instructions.
+
+![instructions](@assets/cs2107-assignment-01/E.1/20250213-112935-original.png)
+
+The deciphered message:
+
+```text
+HAPPY BIRTHDAY!! HOPE YOUR DAY’S FULL OF GOOD VIBES, GOOD FOOD, AND ALL THE 
+    THINGS YOU LOVE. YOU DESERVE THE BEST, SO MAKE SURE TO TREAT YOURSELF (AND 
+    EAT EXTRA CAKE FOR ME LOL). ALSO, HERE’S TO CELEBRATING THE SECRET LANGUAGE
+    WE USE TO TALK TO EACH OTHER EVERY DAY. IT MAKES EVERYTHING SO MUCH MORE 
+    FUN AND FEELS LIKE OUR OWN LITTLE CODE. CHEERS TO ANOTHER YEAR OF LAUGHS, 
+    ADVENTURES, AND RANDOM SHENA NIGANS. LET’S CELEBRATE SOON!
+
+CS2107{SKIBIDI_EMOJI_LANGUAGE_GO_BRRRRRR}
+```
+
+Key: `CS2107{SKIBIDI_EMOJI_LANGUAGE_GO_BRRRRRR}`
+
+## E.2 Cracking hashes!
+
+prompt:
+
+```text
+Author: Lee Kai Xuan
+
+Yo, try cracking this hash: e82d0df0e1001e2c33bc12900faf06e5
+
+But watch out for those rocks! They may just rock you! Wrap the string in 
+    "CS2107{FLAG}". For example, if e82d0df0e1001e2c33bc12900faf06e5 is the 
+    hash of the word "ilovecs", the flag is CS2107{ilovecs}
+
+Unlock Hint for 0 points
+Try some hash cracking tools! There's something about "hash of a cat", or even 
+    a guy named "John" hmm...
+
+Unlock Hint for 0 points
+Once you have the tool, you just need a wordlist! There's something about this 
+    hash that will "rock you" hmm...
+
+```
+
+My gosh. Looking at the hints, it is definitely using JohnTheReaper to crack, using the infamous `rockyou.txt` list.
+
+That being said, I am lazy so I just opened up [CyberChef](https://gchq.github.io/CyberChef/) and pasted the link into the Input. I use the **Anaylse Hash** recipe and get the output:
+
+```
+Hash length: 32
+Byte length: 16
+Bit length:  128
+
+Based on the length, this hash could have been generated by one of the 
+    following hashing functions:
+MD5
+MD4
+MD2
+HAVAL-128
+RIPEMD-128
+Snefru
+Tiger-128
+```
+
+I will hazard a guess and say it is *MD2* / *MD4* / *MD5*. Since the clue is **Rockyou.txt**, most online free-to-use reverse MD5 dehashers will be able to use the rainbow table to reverse lookup. I choose [md5decrypt.net](https://md5decrypt.net/en/). Here is the output:
+
+![dehash](@assets/cs2107-assignment-01/E.2/20250214-212846-original.png)
+
+Key: `CS2107{cs2107711923}`
+
+## E.3 Sub Sub Sub 
+
+Prompt: 
+
+```text
+Author: River Koh
+
+Is this what they call layered security? Here's a bunch of substition ciphers, 
+    even if you know the key, it would take you really long to trace and 
+    decrypt the flag!
+```
+
+Attachments: 
+- `Encryption_Scheme.pdf`
+
+Looking at the pdf shows this:
+
+```text
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+Q O G R M K P I B N E V D W Y L X C U F J H A S T Z
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+C S A Z R X P J G Q N B O F M V E T H D L K Y W U I
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+F S P O I B Q H Z A X E D K Y M W J U V N R T G C L
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+O P D V N Z M J Y E C S K Q H F I T U W B L X A R G
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+U B G Z A Y T D M Q O P J H V E W C I K R S F X L N
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+O Y I V S L C R U G M E D T A Z K J W F X H N Q P B
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+B X L C E R F Y U J O N P W I A Q T V D S G Z M K H
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+D R B P A T V O G I H Y W U N M X C L Z K Q J F S E
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+Z N W S F L J D C B K Q R T V U Y O E H M A I X P G
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+U Q L M J W Z F B E C Y I K P D R V A S O H T N G X
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+M E P N Q G Z S Y F I J U O X L W H A R D B V K T C
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+U D K N O E V R J X B F W S P L A M G T Z Q I H C Y
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+P W L E Y A B G V N M X S D Z K H R J U I C Q O T F
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+Z F O K P C Y A N X D R M H L G V T J S U E B W Q I
+↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+P K D F U B L I S Z H N X T A Y G J Q O M C V R E W
+
+DQ2107{KUO_OISQ_OAAH_EAM_P_VISNU}
+```
+
+I can tell from the _2107_ in the last line that it is the encrypted flag. Immediately, I can tell that `C` mapped to `D` and `S`mapped to `Q`. If we compared the first and last line of the substition cipher given, we get:
+
+```text
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+P K D F U B L I S Z H N X T A Y G J Q O M C V R E W
+DQ2107{KUO_OISQ_OAAH_EAM_P_VISNU}
+```
+
+Sure enough, `C` mapped to `D` and `S`mapped to `Q`. No matter how many layers of substitution, the composition of every substition function map yields a single substition map.
+
+I open up [CyberChef](https://gchq.github.io/CyberChef/) and used the **substite** recipe, giving the plaintext and ciphertext strings:
+
+![CyberChefE3](@assets/cs2107-assignment-01/E.3/20250214-213941-original.png)
+
+![E3 Incorrect](@assets/cs2107-assignment-01/E.3/20250214-214044-original.png)
+
+Oops. The output is `FG2107{HMA_ASQG_APPI_UPX_Y_CSQTM}` which is clearly wrong. I forgot to reverse the plaintext and ciphertext key!
+
+![E3 Correct](@assets/cs2107-assignment-01/E.3/20250214-214223-original.png)
+
+Key: `CS2107{BET_THIS_TOOK_YOU_A_WHILE}`
+
+# Medium
+
+## M.1 Crackable AES?
+
+Prompt: 
+
+```text
+
+Author: Cao Yitian
+
+I was told this is crackable! But it is encrypted in AES... isn't that uncrackable?
+
+Oh, and I was also told to "watch out for the red herring", whatever that means...
+
+Unlock Hint for 0 points
+Is there another way to attack this encryption?
+
+```
+
+Attachments:
+- `output`
+- `herring.py`
+
+`herring.py` contains:
+```py 
+# Flag is the secret and will be in the format CS2107{50m3th1ng}
+
+# 3 things to import
+from Crypto.Cipher import AES
+from random import randbytes
+from Crypto.Util.Padding import pad
+
+# Randomly generated key!
+cipher = AES.new(randbytes(16),AES.MODE_ECB)
+secret = "[REDACTED]"
+code = open("herring.py","rb").read()
+
+with open("output","wb") as f:
+    for i in code:
+        f.write(cipher.encrypt(pad(bytes([i]),16)))
+
+```
+
+while `output` is a data file according to `file`.
+
+Things I noted:
+1. AES using _electronic codebook mode encryption (ECB)_
+2. Block size of 16 bytes and **each character is padded to 16 bytes**
+3. `output` is the encryption of `herring.py` but _probably_ without the `secret` decrypted.
+
+ECB is vulnerable because cipher blocks are identical if plaintext is.
+
+I first do a sanity check to confirm that each character is taken as 8-bit byte and then padded to 16 bytes (128 bits):
+
+```text
+╰─❯ wc -c output
+7312 output
+╰─❯ wc -c empty.py 
+407 empty.py
+```
+
+The encrypted file size of 4352 is **16 times larger** than the original file. This correctly indicates that each 1-byte character of the source python file is encrypted into 16 bytes of encrypted blocks. This helps us guess the length of the secret key.
+
+```text
+╰─❯ wc -c output
+7312 output
+╰─❯ wc -c empty.py 
+407 empty.py
+```
+
+The original encrypted file is 7312 bytes, which means the original file is **457** bytes. That gives us a secret key file size of **50 Bytes** (including the `CS2107{}` prefix). The file can be broken down into:
+
+```text
+ bytes
++-----+
+|     |
+|     |
+| 265 | Head of code
+|     |
+|     |
++-----+
+| 50  | Secret code 
++-----+ 
+|     | 
+| 142 | Tail of code
+|     | 
++-----+
+
+```
+
+We know the contents of the Head and Tail, but not the secret. Looking at the file contents with `hexdump -Cv` (Canonical, no squeezing), each line of 16 bytes corresponds to a character, and it is obvious there are repeats:
+
+```text
+...
+00000010  aa a8 df 79 8b 71 fa cb  fd 23 4d 81 28 fb 7d f9  |...y.q...#M.(.}.|
+...
+00000140  aa a8 df 79 8b 71 fa cb  fd 23 4d 81 28 fb 7d f9  |...y.q...#M.(.}.|
+...
+000001d0  aa a8 df 79 8b 71 fa cb  fd 23 4d 81 28 fb 7d f9  |...y.q...#M.(.}.|
+...
+```
+
+This is the vulnerability of ECB encryption, since it becomes deterministic when the same plaintext and key are inputted. Now is a game of substitution cipher to figure out the following 50 lines from offset 0x109:
+
+```text
+000010a0  37 ec ff a1 2a 6c 7f 1b  b0 1a 3a b3 45 ef e4 1d  |7...*l....:.E...|
+000010b0  6e 56 81 3a 6f 28 18 1a  bc 72 94 e1 69 98 af e6  |nV.:o(...r..i...|
+000010c0  50 06 64 69 cd b9 55 d8  7b 7f c8 b2 e1 d1 cb f3  |P.di..U.{.......|
+000010d0  9b cd 97 d5 5e c1 be 50  98 68 d9 f0 b6 4a 95 2c  |....^..P.h...J.,|
+000010e0  0d af 47 be d3 3b 9c bf  36 ea ec 29 a9 09 68 29  |..G..;..6..)..h)|
+000010f0  45 f8 97 40 70 1e 41 45  10 99 8b 6b 87 6f ed 0b  |E..@p.AE...k.o..|
+00001100  c7 12 a7 20 af a2 c0 27  32 01 6e de b7 77 5c b2  |... ...'2.n..w\.|
+00001110  28 e6 15 a7 09 e7 69 38  d5 18 a8 75 cb 5e 1c c0  |(.....i8...u.^..|
+00001120  b7 d0 d1 14 07 dc 30 0a  c5 35 c6 6e f4 df 98 09  |......0..5.n....|
+00001130  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+00001140  45 f8 97 40 70 1e 41 45  10 99 8b 6b 87 6f ed 0b  |E..@p.AE...k.o..|
+00001150  c7 12 a7 20 af a2 c0 27  32 01 6e de b7 77 5c b2  |... ...'2.n..w\.|
+00001160  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+00001170  45 f8 97 40 70 1e 41 45  10 99 8b 6b 87 6f ed 0b  |E..@p.AE...k.o..|
+00001180  c7 12 a7 20 af a2 c0 27  32 01 6e de b7 77 5c b2  |... ...'2.n..w\.|
+00001190  28 e6 15 a7 09 e7 69 38  d5 18 a8 75 cb 5e 1c c0  |(.....i8...u.^..|
+000011a0  b7 d0 d1 14 07 dc 30 0a  c5 35 c6 6e f4 df 98 09  |......0..5.n....|
+000011b0  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+000011c0  b7 d0 d1 14 07 dc 30 0a  c5 35 c6 6e f4 df 98 09  |......0..5.n....|
+000011d0  07 9e 88 2c 4b 59 11 26  af 8e 8a ef 3c 73 0a f1  |...,KY.&....<s..|
+000011e0  41 94 ff 2b 43 62 26 8b  9f b9 45 6a 8a 81 fa c7  |A..+Cb&...Ej....|
+000011f0  2f 1d de c7 0a 62 c4 94  19 a3 c0 00 60 b6 5b af  |/....b......`.[.|
+00001200  c7 12 a7 20 af a2 c0 27  32 01 6e de b7 77 5c b2  |... ...'2.n..w\.|
+00001210  6b a6 29 fa f2 f7 90 95  05 dd 61 83 8b 43 0f 22  |k.).......a..C."|
+00001220  28 e6 15 a7 09 e7 69 38  d5 18 a8 75 cb 5e 1c c0  |(.....i8...u.^..|
+00001230  6e 56 81 3a 6f 28 18 1a  bc 72 94 e1 69 98 af e6  |nV.:o(...r..i...|
+00001240  50 06 64 69 cd b9 55 d8  7b 7f c8 b2 e1 d1 cb f3  |P.di..U.{.......|
+00001250  07 9e 88 2c 4b 59 11 26  af 8e 8a ef 3c 73 0a f1  |...,KY.&....<s..|
+00001260  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+00001270  6e 56 81 3a 6f 28 18 1a  bc 72 94 e1 69 98 af e6  |nV.:o(...r..i...|
+00001280  47 b4 20 6a a7 ab 20 d7  d2 61 e7 67 0b 44 4a fa  |G. j.. ..a.g.DJ.|
+00001290  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+000012a0  93 8c 03 f0 eb ff 69 f3  77 aa b3 99 47 eb ae 8e  |......i.w...G...|
+000012b0  6e 56 81 3a 6f 28 18 1a  bc 72 94 e1 69 98 af e6  |nV.:o(...r..i...|
+000012c0  78 9e 65 f3 8f 91 6a 34  1a 36 70 73 58 65 07 9c  |x.e...j4.6psXe..|
+000012d0  78 9e 65 f3 8f 91 6a 34  1a 36 70 73 58 65 07 9c  |x.e...j4.6psXe..|
+000012e0  6e 56 81 3a 6f 28 18 1a  bc 72 94 e1 69 98 af e6  |nV.:o(...r..i...|
+000012f0  07 9e 88 2c 4b 59 11 26  af 8e 8a ef 3c 73 0a f1  |...,KY.&....<s..|
+00001300  95 15 89 b2 e0 75 ad 2e  a1 42 66 f3 75 f5 1a 47  |.....u...Bf.u..G|
+00001310  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+00001320  9a 13 b1 8c 8f 41 ef 50  01 c5 97 15 9f 92 ab f2  |.....A.P........|
+00001330  c7 12 a7 20 af a2 c0 27  32 01 6e de b7 77 5c b2  |... ...'2.n..w\.|
+00001340  11 b7 be 1b 9a 9e 7c 34  55 fc 5f a0 5d 18 96 de  |......|4U._.]...|
+00001350  a2 1f 7f e2 05 18 f7 65  be 80 7a 20 43 60 84 45  |.......e..z C`.E|
+00001360  06 ae 14 c8 cb 55 e6 83  6d 44 41 63 a7 1d 67 8a  |.....U..mDAc..g.|
+00001370  83 5e 1e 9a c0 4f 22 bb  5d 78 21 a1 6b 0c 13 67  |.^...O".]x!.k..g|
+00001380  2b b4 95 e7 96 bd 4e 1b  e1 70 02 11 68 1d 05 bb  |+.....N..p..h...|
+00001390  2b b4 95 e7 96 bd 4e 1b  e1 70 02 11 68 1d 05 bb  |+.....N..p..h...|
+000013a0  0d 9d 87 15 39 c5 52 1b  81 47 76 e7 97 a7 1b 86  |....9.R..Gv.....|
+000013b0  8c f6 7b 88 de 12 99 53  c9 26 74 6b f8 36 5e c6  |..{....S.&tk.6^.|
+```
+
+I create a script that reads from the padded `herring.py` and encrypted `output`. Excluding the missing 50 and 800 bytes respectively, The script takes in 16 bytes as key to a dictionary, and a byte of plaintext as key. A simple substitution cipher will be performed:
+
+```py 
+OFFSET=265
+LENGTH=50
+
+dictionary = {}
+cipher_msg=[]
+ptr = 0
+with open("./output", "rb") as f:
+    with open("./padded/herring.py", "r") as g:
+        while 1:
+            # check if there's anymore char in the padded herring file
+            if not g:
+                break
+            ptr += 1
+            if len(cipher_msg) == 50:
+                break
+            cipher = bytes(f.read(16))
+            plaintext = g.read(1)
+            # print(plaintext, cipher)
+            if ptr > OFFSET and ptr <= OFFSET + LENGTH:
+                cipher_msg.append(cipher)
+            else:
+                dictionary[cipher] = str(plaintext)
+decoded=""
+for c in cipher_msg:
+    decoded += str(dictionary[c])
+
+print(decoded)
+```
+
+I break after the 50 bytes since we should (hopefully) have gotten enough pairs to substite. I run the script and:
+
+```text
+S2107{byt3_by_byt3_3ncrypt10n_15_k1ll1ng_my_AES!!}
+```
+
+Two problems:
+1. Classic off-by-one error. But nothing unfixable
+2. The `E`, `I` and `O` has comed out as `3`, `1`, and `0`.
+
+But before I try debugging, we cannot ignore that (2) is intended! Sure enough, behond!
+
+Key: `CS2107{byt3_by_byt3_3ncrypt10n_15_k1ll1ng_my_AES!!}`
+
+## M.2 Consecutive Primes
+
+Prompt: 
+
+```text
+Author: Lee Kai Xuan
+
+If RSA is so secure, I can just use any numbers as my private key! What could 
+    possibly go wrong?
+
+Unlock Hint for 0 points
+from Crypto.Util.number import getPrime
+from math import isqrt
+
+num1 = getPrime(1024)
+num2 = getNextPrime(num1)
+assert isqrt(num1 * num2) + 1 == (num1 + num2) // 2
+```
+Attachments:
+- `output`
+- `key`
+- `encrypt.py`
+
+First task is to analyse the files:
+
+```text
+╰─❯ file key 
+key: OpenSSH public key
+╰─❯ file output 
+output: FORTRAN program, ASCII text, with very long lines (620), with no 
+    line terminators
+```
+
+`encrypt.py` contains the following:
+
+```py 
+from Crypto.Util.number import getPrime, bytes_to_long, isPrime
+from Crypto.PublicKey import RSA
+
+flag = "REDACTED"
+
+def getNextPrime(num):
+    is_prime = False
+    while not is_prime:
+        num += 1
+        is_prime = isPrime(num)
+    return num
+
+
+p = getPrime(1024)
+q = getNextPrime(p)
+n = p * q
+e = 65537
+
+key = RSA.construct((n, e)).export_key().decode()
+
+with open("key", "w") as f:
+    f.write(key)
+
+m = bytes_to_long(flag.encode())
+c = pow(m, e, n)
+
+with open("output", "w") as f:
+    f.write(f"c = {c}")
+```
+
+The interesting part is how the primes are generated - the first prime using the `getPrime` function, and the next prime simply being the next consequtive prime. According to [this](https://pythonhosted.org/pycrypto/Crypto.Util.number-module.html#getPrime), `getPrime(1024)` will return a random 1024-bit prime number with `Random.new().read`
+
+The contents of `output` actually begins with `c = ` followed by 616 numbers. This the ciphertext. Using the [**PyCryptoDome** documents](https://pycryptodome.readthedocs.io/en/latest/src/public_key/rsa.html#Crypto.PublicKey.RSA.construct) we can tell that an _RsaKey_ is generated, and the inputted tuple `(n, e)` is used accordingly as such:
+
+![RSA eqn](@assets/cs2107-assignment-01/M.2/20250215-043610-original.png)
+
+The `export_key` function exports the keys in bytes, which is converted into string with the `decode` function. The default style is *RFC1421/RFC1423*, or **PEM** encoding - basically **Base64** ASCII with plain-text headers and footers.
+
+This is what `key` has, a public key:
+
+```text
+-----BEGIN PUBLIC KEY-----
+MIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQB2/2ekkxThzDUhcu1qPP4m
+jv0KdlVCHMXsP8jufsj+rtp945wQYWHbEt5FVyx2tZz6CPPGKYgmNWuYfXqAgUmi
+dHdqfAfwFJwMLDdF7YgTxGKqn4dqWaFGnB+CcFJfEfRy8gR3wQHMJoL4xzJATp1D
+rUbou1mEDwAuik0a7OpcrlKK/zlh0GeTqpT/AOAn5ri1xjbdD/er7CQqlBnwvZyF
+Z9dpXm6gruKixMdBU7kENUfCrJxtLZZDuKdPlIP7ukdonPnudp+SCSvAayb8aQap
+kUv2l6XKAG0Dd/OT/eFUQHSIF2kYlRYXmrQlseCTJDzTkBt/9pt7SHIgsVcRrIb5
+AgMBAAE=
+-----END PUBLIC KEY-----
+```
+
+We can remove the header and footers, uncipher the base64, and reinteprete the output as an integer to get the public key, or use our good friend [CyberChef](https://gchq.github.io/CyberChef/) and do a *PEM to HEX* and *from HEX* conversion to get a file with the keys as raw bytes:
+
+![raw bytes](@assets/cs2107-assignment-01/M.2/20250215-050034-original.png)
+
+But actually, I realised something while reading the documents on the RSA module: I can simply import the public key:
+
+```python
+from Crypto.PublicKey import RSA
+RSA.import_key(k)
+```
+
+Output: 
+```text
+RsaKey(n=150220..., e=65537)
+```
+
+That is the `n` and `e`. `d` is any number such that:
+
+```
+1 == (65537 * d) % tot(n)
+
+where tot(p*q) = lcm(p-1, q-1) 
+--> Carmichael's totient function
+```
+
+### sleep is goood
+
+I went to sleep, and I woke up with a realisation. The [Wikipedia article or RSA](https://en.wikipedia.org/wiki/RSA_(cryptosystem)) states that:
+
+> To make factoring harder, p and q should be chosen at random, be both large and **have a large difference**.
+
+This setup does not use a large difference, but literally the next prime. This is bad because then the prime nubmers are basically **very close to the square root of the product**. 
+
+```
+let q = p + x + y 
+
+n
+= t^2 
+= (p)(p+x+y) 
+= p^2 + px + py 
+= (t-x)(t+y)
+= t^2 - xt + yt - xy
+
+yt - xt - xy = 0
+yt - xt = xy 
+t(y-x) = xy 
+t = xy/(y-x)
+```
+
+Anyways I don't think this is gonna be fun trying out. I will just brute force. I can round down the square root of `n` to get `t-a`, then find the next prime such that `(t-a)+c = q`. Then I will check if `(n%q)==0`, else continue to the next prime. Eventually `(n%q)==0` is true and `p=n/q` or `p=n/(t-a)+c`.
+
+```py 
+from Crypto.PublicKey import RSA
+from Crypto.Util.number import isPrime
+from math import isqrt, lcm
+
+
+def getNextPrime(num):
+    is_prime = False
+    while not is_prime:
+        num += 1
+        is_prime = isPrime(num)
+    return num
+
+with open("key") as f:
+    k = f.read()
+
+pub_key = RSA.import_key(k)
+n = pub_key.n
+e = pub_key.e
+
+p = isqrt(n)
+q = 0
+
+while p < n:
+    p = getNextPrime(p)
+    if n % p == 0:
+        q = n // p
+        break
+assert q > 0
+assert p*q==n
+
+# 1 = e*d mod tot(n)
+d = pow(e, -1, lcm(p-1, q-1))
+
+private_key = RSA.construct((n, e, d))
+c = 5 # Long cipher
+dsmg = private_key.decrypt(c)
+print(dmsg)
+```
+
+```text
+╰─❯ bpython script.py
+Traceback (most recent call last):
+  File "script.py", line 38, in <module>
+    dsmg = private_key.decrypt(c)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/j64ali6q5875a6byqhhba5xjphw8kmz5-python3-3.12.8-env/lib/
+    python3.12/site-packages/Crypto/PublicKey/RSA.py", line 442, in decrypt
+    raise NotImplementedError("Use module Crypto.Cipher.PKCS1_OAEP instead")
+NotImplementedError: Use module Crypto.Cipher.PKCS1_OAEP instead
+```
+
+Oh. ok I will swap out the function, since I am using *PyCryptoDome* instead.
+
+```py 
+# dsmg = private_key.decrypt(c)
+dmsg = PKCS1_OAEP.new(private_key).decrypt(c)
+```
+
+```text 
+╰─❯ bpython script.py
+Traceback (most recent call last):
+  File "script.py", line 38, in <module>
+    dmsg = PKCS1_OAEP.new(private_key).decrypt(c)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/j64ali6q5875a6byqhhba5xjphw8kmz5-python3-3.12.8-env/lib/
+    python3.12/site-packages/Crypto/Cipher/PKCS1_OAEP.py", line 168, in decrypt
+    if len(ciphertext) != k or k < hLen+2:
+       ^^^^^^^^^^^^^^^
+TypeError: object of type 'int' has no len()
+```
+
+Haiz. I took a look at the documentation again:
+
+![PyCryptoDome decrypt](@assets/cs2107-assignment-01/M.2/20250215-184041-original.png)
+
+I need to convert the ciphertext into bytes
+
+```py 
+dmsg = PKCS1_OAEP.new(private_key).decrypt(bytes(c))
+#                                          ^^^^^^^^
+```
+
+I try again
+
+```text 
+╰─❯ bpython script.py
+Traceback (most recent call last):
+  File "script.py", line 38, in <module>
+    dmsg = PKCS1_OAEP.new(private_key).decrypt(bytes(c))
+                                               ^^^^^^^^
+OverflowError: cannot fit 'int' into an index-sized integer
+```
+
+I look at how this file was created:
+
+```py 
+m = bytes_to_long(flag.encode())
+c = pow(m, e, n)
+
+with open("output", "w") as f:
+    f.write(f"c = {c}")
+```
+
+I try doing this instead:
+
+```py 
+dmsg = pow(c, e, d)
+```
+
+And I try again:
+
+```text 
+╰─❯ bpython script.py
+12043454892708555159153881......
+```
+
+Ok that is good. I just need to convert this into a string of text. I found a function in `Crypto.Util.number` called `long2str`, and also an appropriate `long_to_bytes` which I could have used to convert `c` into bytes but oh well.
+
+```py 
+print(long2str(dmsg))
+```
+
+I try again
+
+```text
+╰─❯ bpython script.py
+/nix/store/j64ali6q5875a6byqhhba5xjphw8kmz5-python3-3.12.8-env/lib/python3.12/
+    site-packages/Crypto/Util/number.py:514: UserWarning: long2str() has been 
+    replaced by long_to_bytes()
+  warnings.warn("long2str() has been replaced by long_to_bytes()")
+b'\t\x8aN\x15o\xd89V.....
+```
+
+_oh._
+
+```py 
+dmsg = PKCS1_OAEP.new(private_key).decrypt(long_to_bytes(c))
+```
+
+and....
+
+```text
+╰─❯ bpython script.py
+Traceback (most recent call last):
+  File "script.py", line 38, in <module>
+    dmsg = PKCS1_OAEP.new(private_key).decrypt(long_to_bytes(c))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/j64ali6q5875a6byqhhba5xjphw8kmz5-python3-3.12.8-env/lib/
+    python3.12/site-packages/Crypto/Cipher/PKCS1_OAEP.py", line 191, in decrypt
+    raise ValueError("Incorrect decryption.")
+ValueError: Incorrect decryption.
+```
+
+When in doubt, blame the library.
+
+Let's go back to manual calculation:
+
+```py 
+dmsg = pow(c, e, d)
+```
+
+Wait. It is supposed to be `c^d mod n`!
+
+```py 
+m = pow(c, d, n)
+print(long_to_bytes(m))
+```
+
+Anddddddd
+
+```text 
+╰─❯ bpython script.py
+b'CS2107{rsa_stands_for_really_secure_algorithm}'
+```
+
+:facepalm:
+
+
+Key: `CS2107{rsa_stands_for_really_secure_algorithm}`
+
+## M.3 Encryption Service
+
+Prompt: 
+
+```text
+Author: River Koh
+
+I made a stream cipher that uses 2 keys, surely this should be twice as secure!
+
+nc cs2107-ctfd-i.comp.nus.edu.sg 12345
+```
+
+Attachments:
+- `service.py`
+
+
+This is the `service.py` that runs on the server:
+
+```py 
+import socket
+import os
+import random
+import string
+import threading
+
+SECRET_KEY = 'REDACTED'
+FLAG = 'REDACTED'
+
+def encrypt(message):
+	if len(message) <= 0 or len(message) > 40: 
+		return ''
+	result = []
+	prev = 0
+	for i in range(len(message)):
+		c = (ord(message[i]) + prev - ord(FLAG[i % len(FLAG)])) 
+		c *= ord(SECRET_KEY[i % len(SECRET_KEY)]) 
+		c %= 1114111 # limit range of characters to chr()
+		result.append(c)
+		prev = c
+	print(result)
+	return ''.join(map(chr, result))
+
+
+def handle_client(client_socket):
+	while True:
+		# Send a welcome message and request for encryption or decryption
+		client_socket.send(b"Welcome to the Encryption Service!\n")
+
+		while True:
+			client_socket.send(b"Enter the message you would like to encrypt:\n")
+			message = client_socket.recv(128).decode('utf-8').strip()
+			encrypted_message = encrypt(message)
+			client_socket.send(f"Encrypted Message: {encrypted_message}\n"
+                      .encode('utf-8'))
+
+		client_socket.close()
+
+
+HOST = '0.0.0.0'
+PORT = 8080
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((HOST, PORT))
+server_socket.listen(1)
+
+print(f"Server listening on {HOST}:{PORT}...")
+
+while True:
+    client_socket, client_address = server_socket.accept()
+    print(f"Connection from {client_address}")
+    
+    client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+    client_thread.daemon = True  # Make the thread a daemon thread so it closes 
+                                 # when the main program exits
+    client_thread.start()
+```
+
+When manually accessing the service (via *pe111.comp.nus.edu.sg*), I was able to enter text but the reply was [*Mojibake*](https://en.wikipedia.org/wiki/Mojibake), often with arabic text. Entering more than 40 characters yields an empty string.
+
+![server reply](@assets/cs2107-assignment-01/M.3/20250215-215543-original.png)
+
+I will use the gift of [pwntools](https://docs.pwntools.com/en/dev/intro.html) to help me.
+
+I first make sure that I am able to interface with the server:
+
+```py 
+from pwn import ssh
+import os
+from dotenv import load_dotenv
+load_dotenv("../.env")
+
+server="cs2107-ctfd-i.comp.nus.edu.sg"
+port=12345
+
+shell = ssh(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"), 
+            host=os.getenv("JUMP_SERVER"))
+conn = shell.connect_remote(host=server, port=port)
+# start
+
+print(conn.recvlines(timeout=5))
+
+# cleanup
+conn.close()
+shell.close()
+```
+
+Result - I get the `Welcome to the Encryption Service` message!
+
+```text 
+╰─❯ bpython script.py
+[x] Connecting to pe111.comp.nus.edu.sg on port 22
+[+] Connecting to pe111.comp.nus.edu.sg on port 22: Done
+[*] yukna@pe111.comp.nus.edu.sg:
+    Distro    Ubuntu 20.04
+    OS:       linux
+    Arch:     amd64
+    Version:  5.4.0
+    ASLR:     Enabled
+    SHSTK:    Disabled
+    IBT:      Disabled
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH to pe111.comp.
+    nus.edu.sg: Done
+[b'Welcome to the Encryption Service!', b'Enter the message you would like 
+    to encrypt:']
+[*] Closed remote connection to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH 
+    connection to pe111.comp.nus.edu.sg
+[*] Closed connection to 'pe111.comp.nus.edu.sg'
+```
+
+I create a simple loop to test and try different inputs, and capture the outputs given by the server 
+
+```py 
+responses = []
+tests = [b"test", b"0"*39, b"1"*40,b"2"*41]
+prompt = b"Enter the message you would like to encrypt:"
+reply = b"Encrypted Message: "
+
+for test_lines in tests:
+    conn.recvuntil(prompt)
+    conn.sendline(test_lines)
+    conn.recvuntil(reply)
+    responses.append(conn.recvline())
+
+for i,line in enumerate(tests):
+    print(f"\n\n given:{line}, \n received:{responses[i]}")
+```
+
+And as expected, 40 characters is the limit:
+
+```text 
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH to pe111.comp.
+    nus.edu.sg: Done
+
+
+ given:b'test', 
+ received:b'\xe0\xa8\xa5\xf1\x81\x87\xaa\xf2\xb0\xae\xa0\xf1\x8b\xb2\xb4\n'
+
+
+ given:b'000000000000000000000000000000000000000', 
+ received:b'\xf4\x8f\xb0\....\n'
+
+
+ given:b'1111111111111111111111111111111111111111', 
+ received:b'\xf4\x8f\xb1\x85\....\n'
+
+
+ given:b'22222222222222222222222222222222222222222', 
+ received:b'\n'
+```
+
+Now that that is working, I am particularly interested in:
+
+```py 
+def encrypt(message):
+	if len(message) <= 0 or len(message) > 40: 
+		return ''
+	result = []
+	prev = 0
+	for i in range(len(message)):
+		c = (ord(message[i]) + prev - ord(FLAG[i % len(FLAG)])) 
+		c *= ord(SECRET_KEY[i % len(SECRET_KEY)]) 
+		c %= 1114111 # limit range of characters to chr()
+		result.append(c)
+		prev = c
+	print(result)
+	return ''.join(map(chr, result))
+```
+
+I noticed that:
+1. message length is 1-40 characters
+2. each character's byte value is added to the previous cipher char, and subtracted from the byte value of the character of the flag at the index of the current message charater index 
+3. this is then multiplied by the byte value of the ith character of secret key 
+
+For the very first character, `prev` is zero. So if `m0` is the byte of the first character given, and `m1` is the next byte, the encrypted ciphertext byte is:
+
+```py
+f0 = ord(FLAG[0])
+s0 = ord(SECRET_KEY[0])
+c0 = (m0 - f0) * s0 
+
+f1 = ord(FLAG[1])
+s1 = ord(SECRET_KEY[1])
+c1 = (m1 + c0 - f1) * s1 
+```
+
+if we can find an `m0` such that `c0` is zero, then 
+
+```py
+#     (m0 - f0) * s0 == 0
+# ==> (f0 - f0) * s0 == 0
+# ==> m0 == f0
+
+c0 = 0
+c1 = (m1 - f1) * s1 
+```
+
+Note how the `m0` is equal to `f0` because `f` and `s` are assumed to be nonzero.
+
+```py
+guesses = b""
+for i in range(40):
+    for x in range(255):
+        guess = guesses + x.to_bytes()
+        conn.recvuntil(prompt)
+        conn.sendline(guess)
+        conn.recvuntil(reply)
+        y = conn.recvline().strip()
+        print(f"[{x}] guess: {guess}, response: {y.decode()}")
+        if y == 0:
+            guesses += bytes(x)
+            break
+print(guesses)
+```
+
+What I get:
+![stuck response](@assets/cs2107-assignment-01/M.3/20250215-225702-original.png)
+
+The console freezes after 127th character.
+
+This is when I realised my mistake. The `bytes()` function is overloaded and can either take in an array or an integer with different outcomes:
+
+![bytes](@assets/cs2107-assignment-01/M.3/20250215-230136-original.png)
+
+I fixed the loop:
+
+```py 
+guesses = b""
+for i in range(40):
+    for x in range(256):
+        guess = guesses + (bytes([x]))
+
+        conn.recvuntil(prompt)
+        conn.sendline(guess)
+        conn.recvuntil(reply)
+
+        y = int.from_bytes(conn.recvline().strip())
+        if y == 0:
+            print(f"[{i}][{x}] guess: {guess}, response: {y}")
+            guesses = guesses + (bytes([x]))
+            break
+print(guesses)
+```
+
+And reran the script.
+
+```text 
+[0][9] guess: b'\t', response: 0
+[1][9] guess: b'\t\t', response: 0
+[2][9] guess: b'\t\t\t', response: 0
+[3][9] guess: b'\t\t\t\t', response: 0
+[4][9] guess: b'\t\t\t\t\t', response: 0
+[5][9] guess: b'\t\t\t\t\t\t', response: 0
+```
+
+Now, something is wrong because this is definitely not right. I assume it is because of this line in the server:
+
+```py
+message = client_socket.recv(128).decode('utf-8').strip()
+```
+
+The `strip` takes out the whitespace character (ie `\t`) and a blank message will return a blank cipher, so that's not right. This also means my check for null characters is not technically right since a string of byte objects of `\x00` is not the integer `0`. Changes:
+
+```py
+# strip will not remove null bytes but will remove whitespaces:
+# >>> bytes([0]).decode().strip()
+# '\x00'
+# >>> bytes([ord('\t')]).decode().strip()
+# ''
+test_byte = (bytes([x]))
+if len(test_byte.decode().strip()) == 0:
+    continue
+guess = guesses + test_byte
+
+# .....
+# change the check to test all bytes and use all() to fold results
+y = conn.recvline().strip()
+if all(b == 0 for b in y):
+```
+
+And this was glorious, watching the characters come out one by one:
+
+```text
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:12345 via SSH to pe111.comp.
+    nus.edu.sg: Done
+[0][67] guess: b'C', response: b'\x00'
+[1][83] guess: b'CS', response: b'\x00\x00'
+[2][50] guess: b'CS2', response: b'\x00\x00\x00'
+[3][49] guess: b'CS21', response: b'\x00\x00\x00\x00'
+[4][48] guess: b'CS210', response: b'\x00\x00\x00\x00\x00'
+[5][55] guess: b'CS2107', response: b'\x00\x00\x00\x00\x00\x00'
+[6][123] guess: b'CS2107{', response: b'\x00\x00\x00\x00\x00\x00\x00'
+[7][119] guess: b'CS2107{w', response: b'\x00\x00\x00\x00\x00\x00\x00\x00'
+[8][48] guess: b'CS2107{w0', response: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+....
+```
+
+Key: `CS2107{w0w_y0u_c4n_mult1ply_by_0}`
+
+# Hard
+
+## H.1 Mersenne Untwister
+
+Prompt: 
+
+```text
+Author: Lee Kai Xuan
+
+It's just 8 random bytes that you have to guess. Time to test your luck!
+
+nc cs2107-ctfd-i.comp.nus.edu.sg 8001
+Unlock Hint for 0 points
+Is there any issue with reusing the same PRNG an unlimited number of times? 
+    I heard there's a Python package that can help you with this...something 
+    about "rand" and "crack"...
+
+Unlock Hint for 0 points
+How does Python implement random.randbytes? How does it relate to 
+    random.getrandbits? Look at the Python source code!
+```
+
+Attachments:
+- `server.py`
+
+
+First, let's see the `server.py` contents:
+
+```py 
+import random
+
+FLAG = "REDACTED"
+
+print("Hey, see if you can get the next hexadecimal value!")
+
+while True:
+    # Original challenge was simply random.randbytes(4)
+    # which meant you just needed to iterate through 624 times
+    # instead of 312 times but splitting the hex into 2 to submit
+    correct = random.randbytes(8).hex()
+    guess = input("Your guess: ")
+    if guess == correct:
+        print(f"Wow, you must be so lucky! Here's your flag: {FLAG}")
+        break
+    else:
+        print(f"Unlucky, the correct number was {correct}. Try again!")
+```
+
+Looks like a task to exploit the pseudorandom generator's **pseudo** randomness.
+
+I first whip up a `scripy.py`:
+
+```py 
+from pwn import ssh
+import os
+from dotenv import load_dotenv
+load_dotenv("../.env")
+
+server="cs2107-ctfd-i.comp.nus.edu.sg"
+port=8001
+
+shell = ssh(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"), 
+            host=os.getenv("JUMP_SERVER"))
+conn = shell.connect_remote(host=server, port=port)
+# start
+
+prompt = b"Your guess: "
+correct = b"Wow, you must be so lucky! Here's your flag: "
+wrong = b"Unlucky, the correct number was "
+conn.recvuntil(prompt)
+conn.sendline(bytes([0,0,0,0,0,0,0,0]).hex())
+result = conn.recvline()
+print(result)
+
+# cleanup
+conn.close()
+shell.close()
+```
+
+```text 
+b'Unlucky, the correct number was 794e47ec8e94cac5. Try again!\n'
+```
+
+Ok it works. Now the trick is to continuously try until the response matches the correct string. It is not feasible to loop over `2^8^8` guesses, so let's look at *randbytes*. The documents say:
+
+> random.randbytes(n)
+>   Generate n random bytes.
+>   This method should not be used for generating security tokens. Use secrets.token_bytes() instead.
+
+In the source code `random.py`, this is how we get the random bytes:
+
+```py 
+def randbytes(self, n):
+    """Generate n random bytes."""
+    return self.getrandbits(n * 8).to_bytes(n, 'little')
+
+def getrandbits(self, k):
+    """getrandbits(k) -> x.  Generates an int with k random bits."""
+    if k < 0:
+        raise ValueError('number of bits must be non-negative')
+    numbytes = (k + 7) // 8                       # bits / 8 and rounded up
+    x = int.from_bytes(_urandom(numbytes))
+    return x >> (numbytes * 8 - k)                # trim excess bits
+```
+
+So to put in context, this is what happens:
+
+```text
+random.randbytes(8)
+==> getrandbits(64).to_bytes(8, 'little')
+==> int.from_bytes(_urandom(8))                
+```
+
+I cannot deny, I was lost here until I saw the hint for using randcrack. Also the title of this challence is *Mersenne Untwister*, which is a nod to the **Mersenne Twister** pseudorandom generator. Providing 624 32-bit numbers (4 bytes) would tweak the matrix enough to produce the same output as the pseudorandom generator used by `urandom`
+
+I had to install _randcrack_ from the repo as it is not packaged in the nixpkgs repositoy
+
+```nix 
+(
+    buildPythonPackage rec {
+        pname = "randcrack";
+        version = "0.2.0";
+        src = fetchPypi {
+            inherit pname version;
+            sha256 = "sha256-zM9OzeoUdmZTDwgm0Rpyv8lnzNerNuLt+alR3nwHAhs=";
+        };
+        doCheck = false;
+    }
+)
+```
+
+I set up _randcrack_:
+
+```py 
+from randcrack import RandCrack
+rc = RandCrack()
+
+# ...
+
+for i in range(624 // 2):
+
+# ...
+
+rc.submit(int(last_correct[:8], 16))
+rc.submit(int(last_correct[8:], 16))
+
+# ...
+
+
+guess = rc.predict_getrandbits(64).to_bytes(8, 'little')
+conn.recvuntil(prompt)
+conn.sendline(bytes([0,0,0,0,0,0,0,0]).hex())
+result = conn.recvline()
+if result.decode().startswith(correct):
+    print(result)
+else:
+    last_correct = result[len(wrong):len(wrong)+(8*2)]
+    print(f"It was {last_correct} not {guess}")
+```
+
+Anyways it did not work. I am sad. I try a few things. One is to just submit the number as a single 64-bit integer and not 2 32-bit integers. 
+```py 
+# rc.submit(int(last_correct[:8], 16))
+# rc.submit(int(last_correct[8:], 16))
+rc.submit(int(last_correct, 16))
+```
+
+I also try changing the endianness:
+
+```py 
+guess = rc.predict_getrandbits(64).to_bytes(8, 'big').hex()
+```
+
+Unfortunately I got:
+
+```text
+ValueError: Didn't recieve enough bits to predict
+```
+
+So I have to manually split and feed the 32 bit numbers. I think maybe there might be an endianness issue.
+
+I had to go toilet, and while on the thinking throne I did some test:
+
+![online intepreter code](@assets/cs2107-assignment-01/H.1/photo_2025-02-16_02-28-11.jpg)
+![online intepreter result](@assets/cs2107-assignment-01/H.1/photo_2025-02-16_02-27-50.jpg)
+
+So this should be the correct order since the first 4 bytes comes first, in order, followed by the next 4 bytes
+
+```py 
+# received bytes are of: 
+# --> random.randbytes(8).hex()
+# --> random.getrandbits(64).to_bytes(8, 'little').hex()
+rc.submit(int(last_correct[:8], 16))
+rc.submit(int(last_correct[8:], 16))
+```
+
+Still not working. I decided to do a sanity check to see if I am using _randcrack_ correctly:
+
+```py 
+import random
+from randcrack import RandCrack 
+
+
+random.seed(0)
+rc = RandCrack()
+
+for i in range(624):
+    # n = random.randbytes(4).hex()
+    n = random.getrandbits(32)
+    rc.submit(n)
+
+print(f"Random result: {random.getrandbits(32)}\nCracker result: 
+    {rc.predict_getrandbits(32)}")
+
+"""
+╰─❯ bpython test.py
+Random result: 2229104038
+Cracker result: 2229104038
+"""
+
+random.seed(0)
+rc = RandCrack()
+
+for i in range(624):
+    n = random.randbytes(4).hex()
+    rc.submit(int(n, 16))
+
+print(f"Random result: {random.getrandbits(32)}\nCracker result: 
+    {rc.predict_getrandbits(32)}")
+
+"""
+╰─❯ bpython test.py
+Random result: 2229104038
+Cracker result: 2437392779
+"""
+```
+
+Ah, there seems to be an issue with converting the hex strings back into string. I am guessing it has to do with either endianness or signs. After some tinkering, I got it:
+
+```py 
+for i in range(624):
+    n = random.randbytes(4)
+    bs = [b for b in n]
+    bs.reverse()
+    rc.submit(int(bytes(bs).hex(),16))
+
+print(f"Random result: {random.getrandbits(32)}\nCracker result: 
+    {rc.predict_getrandbits(32)}")
+
+"""
+╰─❯ bpython test.py
+Random result: 2229104038
+Cracker result: 2229104038
+"""
+```
+
+It was the endianness!
+I now need to reverse the inputs I get from the server, and then feed it into _randcrack_ but byte by byte...
+
+```py 
+random.seed(0)
+rc = RandCrack()
+
+for i in range(624):
+    n = random.randbytes(4).hex()
+    bytes_of_number = [n[i:2+i] for i in range(0, 8, 2)]
+    bytes_of_number.reverse()
+    rc.submit(int(''.join(bytes_of_number), 16))
+
+print(f"Random result: {random.getrandbits(32)}\nCracker result: 
+    {rc.predict_getrandbits(32)}")
+
+"""
+╰─❯ bpython test.py
+Random result: 2229104038
+Cracker result: 2229104038
+"""
+
+random.seed(0)
+rc = RandCrack()
+
+for i in range(312):
+    n = random.randbytes(8).hex()
+    bytes_of_number = [n[i:2+i] for i in range(0, 16, 2)]
+    bytes_of_number.reverse()
+    rc.submit(int(''.join(bytes_of_number[4:]), 16))
+    rc.submit(int(''.join(bytes_of_number[:4]), 16))
+
+print(f"Random result: {random.getrandbits(32)}\nCracker result: 
+    {rc.predict_getrandbits(32)}")
+
+"""
+╰─❯ bpython test.py
+Random result: 2229104038
+Cracker result: 2229104038
+"""
+```
+
+Perfect! I now need to bring this carefully into the actual script...
+
+```py 
+n = result[len(wrong):len(wrong)+(8*2)].decode()
+bytes_of_number = [n[i:2+i] for i in range(0, 16, 2)]
+bytes_of_number.reverse()
+rc.submit(int(''.join(bytes_of_number[4:]), 16))
+rc.submit(int(''.join(bytes_of_number[:4]), 16))
+```
+
+Output:
+```text
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:8001 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:8001 via SSH to pe111.comp.
+    nus.edu.sg: Done
+script.py:37: BytesWarning: Text is not bytes; assuming ASCII, no guarantees. 
+    See https://docs.pwntools.com/#bytes
+  conn.sendline(guess)
+b"Wow, you must be so lucky! Here's your flag: CS2107{untwist_me!}\n"
+[*] Closed remote connection to cs2107-ctfd-i.comp.nus.edu.sg:8001 via SSH 
+    connection to pe111.comp.nus.edu.sg
+[*] Closed connection to 'pe111.comp.nus.edu.sg'
+```
+
+Key: `CS2107{untwist_me!}`
+
+## H.2 Not So Random
+
+Prompt: 
+
+```text
+Author: Cao Yitian
+
+I was told that rand() is not secure, so I have decided to use time as a seed!
+    If I seeded my rand() and generated my AES key during runtime, surely I can
+    eliminate the security issue with rand()...
+
+nc cs2107-ctfd-i.comp.nus.edu.sg 13337
+Unlock Hint for 0 points
+rand() is not secure, are you able to perfectly emulate the rand() call on the 
+    server?
+
+Unlock Hint for 0 points
+If you are handling epoch conversion in your code, could there be some problems
+    with the timezone?
+```
+
+Attachments:
+- `flag.txt`
+- `chall.c`
+- `aes.h`
+- `aes.c`
+
+This is very interesting. I will just paste the code for `chall.c`:
+
+```c 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <math.h>
+#include <string.h>
+#include "aes.h"
+
+void setup() {
+  setbuf(stdin, 0);
+  setbuf(stdout, 0);
+}
+
+int main() {
+    setup();
+
+    // Display time to user
+    time_t raw;
+    time(&raw);
+    printf("Server connected.\n");
+    printf("%s\n", asctime(localtime(&raw)));
+
+    // Set seed as time
+    srand(time(NULL));
+    // Generate AES-128 key
+    unsigned char buf[16];
+    int i;
+    for (i = 0; i < sizeof(buf); i++) {
+        buf[i] = rand() % 256;
+    }
+    // Read flag from file
+    FILE *f = fopen("flag.txt", "r");
+    if (NULL == f) {
+        printf("File can't be opened \n");
+        return EXIT_FAILURE;
+    }
+    char ch;
+    char flag[32];
+    int idx = 0;
+    while ((ch = fgetc(f)) != EOF) {
+        sprintf(flag+idx, "%c", ch);
+        idx++;
+    }
+
+    // Encrypt flag
+    struct AES_ctx* ctx = malloc(sizeof(struct AES_ctx));
+    AES_init_ctx(ctx, buf);
+    char flag_encrypted[32];
+    strcpy(flag_encrypted, flag);
+    AES_ECB_encrypt(ctx, flag_encrypted);
+
+    // Print encrypted flag
+    char input[33];
+    printf("Ha! You will never guess the flag!\n");
+    printf("rand() might not be cryptographically secure, but surely it's \
+            secure enough if I use time as a seed!\n");
+    printf("You're free to try anyway, though.\n");
+    printf("Here's the encrypted flag in hexadecimal: ");
+    for (int i = 0; i < 32; i++) {
+        printf("%02X", (unsigned char)flag_encrypted[i]);
+    }
+    printf("\n");
+    printf("You can tell me your guess, and I'll let you know if it's correct:\
+    \n");
+
+    read(STDIN_FILENO, input, 33);
+    fflush(stdin);
+
+    // Check user input against actual flag
+    if (!strncmp(input, flag, 32)) {
+        printf("No way, how did you get my flag!?\n");
+        printf("I guess rand() wasn't secure afterall...\n");
+    } else {
+        printf("Wrong!!\n");
+    }
+}
+```
+
+Quick things I notice:
+1. flag is 32 charaters long
+2. We are being told the server time, but it is first converted to localtime and then formatted
+3. this time function is being used to set the seed for AES key generation
+
+I quickly copy the script I had for the other challenges and made a quick basic script:
+
+```py 
+from pwn import ssh
+import os
+from dotenv import load_dotenv
+load_dotenv("../.env")
+
+server="cs2107-ctfd-i.comp.nus.edu.sg"
+port=13337
+
+shell = ssh(user=os.getenv("USERNAME"), password=os.getenv("PASSWORD"), 
+            host=os.getenv("JUMP_SERVER"))
+conn = shell.connect_remote(host=server, port=port)
+# start
+cipher_prompt = b"Here's the encrypted flag in hexadecimal: "
+prompt = b"You can tell me your guess, and I'll let you know if it's correct:\n"
+
+print(conn.recvuntil(cipher_prompt).decode())
+cipher = conn.recvline()
+
+conn.recvuntil(prompt)
+conn.sendline(bytes(32)) # empty response
+
+response = conn.recvline()
+print(response.decode())
+# cleanup
+conn.close()
+shell.close()
+```
+
+This is the response:
+
+```text 
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg: Done
+Server connected.
+Sat Feb 15 20:00:20 2025
+
+Ha! You will never guess the flag!
+rand() might not be cryptographically secure, but surely it's secure enough 
+    if I use time as a seed!
+You're free to try anyway, though.
+Here's the encrypted flag in hexadecimal: 
+Wrong!!
+
+[*] Closed remote connection to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH 
+    connection to pe111.comp.nus.edu.sg
+[*] Closed connection to 'pe111.comp.nus.edu.sg'
+```
+
+for context, my local machine time is: `Sat Feb 16 04:00:20 2025`. 
+
+**do not judge my working hours**.
+
+If I can get the key generated by `rand()`, which might be possible by grabbing the seed used (in this case the `time`) then I can generate the key by myself dynamically.
+
+I just decided to build this server on my local machine, and:
+
+```text 
+╰─❯ gcc chall.c aes.c aes.h -o chall
+chall.c: In function ‘main’:
+chall.c:64:5: warning: ignoring return value of ‘read’ declared with attribute 
+    ‘warn_unused_result’ [-Wunused-result]
+   64 |     read(STDIN_FILENO, input, 33);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+╰─❯ ./chall
+Server connected.
+Mon Feb 17 16:13:59 2025
+
+*** buffer overflow detected ***: terminated
+fish: Job 2, './chall' terminated by signal SIGABRT (Abort)
+```
+
+Oops. ok I will just try step by step. Anyways there are a few things to learn about time in `C`. 
+
+1. the `time()` function returns a `time_t` type which is a unix timestamp integer.
+2. the`gmtime()` and `localtime()` functions convert `time_t` to `struct tm` which containts the timestamp broken into human readable components, converted to UTC or local time respectively.
+3. To reverse this, `mktime()` converts `struct tm` back to `time_t`.
+4. the `asctime()` function converts `struct tm` into a readable `string` of the format `Www Mmm dd hh:mm:ss yyyy`.
+
+This should show the `time_t` and `string` formats:
+
+```c 
+int main() {
+    time_t raw;
+    time(&raw);
+    printf("string local: %s\n", asctime(localtime(&raw)));
+    printf("string UTC: %s\n", asctime(gmtime(&raw)));
+    printf("raw time_t: %ld\n", raw);
+    return 0;
+}
+```
+
+Output:
+
+```text 
+╰─❯ gcc test.c -o test
+╰─❯ chmod +x test
+╰─❯ ./test
+string local: Mon Feb 17 16:45:37 2025
+
+string UTC: Mon Feb 17 08:45:37 2025
+
+raw time_t: 1739781937
+```
+
+This is how the string is formatted from `tm`:
+
+```text
+  str:  Mon Feb 17 08:45:37 2025
+  int:   1  2   17 08 45 37  123
+         |  |   |  |  |  |   |
+tm_sec --|--|---|--|--|--+   |
+tm_min --|--|---|--|--+      |
+tm_hour--|--|---|--+         |
+tm_mday--|--|---+            |
+tm_mon --|--+                |
+tm_year--|-------------------+
+tm_wday--+
+tm_yday
+tm_isdst
+```
+
+If we run this python script, we can get the correct epoch time:
+
+```py 
+date_time = datetime.datetime(2025, 2, 17, 8, 45, 37)
+print("unix_timestamp => ", (time.mktime(date_time.timetuple())))
+
+"""
+output:
+unix_timestamp =>  1739781937.0
+"""
+```
+
+From the test done earlier when connecting to the server, the server's local time seems to be UTC time, so we can directly convert the string to unix timestamp. I decided to use python's `datetime.strptime` to get the timestamp:
+
+```py 
+conn.recvuntil(time_prompt)
+time_str = conn.recvline().decode().strip()
+utc_time = datetime.strptime(time_str, "%a %b %d %H:%M:%S %Y")
+timestamp = datetime.timestamp(utc_time)
+```
+
+This can then be fed back into the test c file which initialises the aes implementation and seeds the `srand` with the retrieved timestamp:
+
+```c 
+// seed rnd
+long timestamp = strtol(argv[1], NULL, 10);
+srand(timestamp);
+
+// Generate AES-128 key
+unsigned char buf[16];
+int i;
+for (i = 0; i < sizeof(buf); i++) {
+    buf[i] = rand() % 256;
+}
+
+struct AES_ctx* ctx = malloc(sizeof(struct AES_ctx));
+AES_init_ctx(ctx, buf);
+
+// convert hex string to char array
+unsigned char flag_encrypted[32];
+unsigned char *dst = flag_encrypted;
+unsigned char *end = flag_encrypted + sizeof(flag_encrypted);
+char *src = argv[2];
+unsigned int u;
+while (dst < end && sscanf(src, "%2x", &u) == 1)
+{
+    *dst++ = u;
+    src += 2;
+}
+
+AES_ECB_decrypt(ctx, flag_encrypted);
+printf("%s", flag_encrypted);
+```
+
+My only concern is that the time outputted by the server and the seed used by the server differs by a few milliseconds, but it should not be an issue since unix integer timestamps have **one second resolution** so as long as the consecutive operations occur within the same second, the value returned by `time()` should be the same.
+
+```text 
+JzZ,snd0m_4ft3r_4ll?}
+```
+
+This is what I get as the output. Strange. If I let my python script collect the result via `subprocess.check_output`, I get this string of bytes:
+
+```text
+b'2\xf0]\x98~\xef\xc6\x0f\xdf?w\x85\x85\x9a\xb4\x11nd0m_4ft3r_4ll?}\n'
+```
+
+The good thing is that it is consistant. This suggests that the time that I grab and the actual time used is off. This could be due to the server actually not running on the correctly synchronised time - so its local time is not GMT+00 but some other time zone, offsetting the actual wrong system time.
+
+What time zone? I do not know. I think at this point, I am gonna try brute force different offsets:
+
+```py 
+conn.recvuntil(time_prompt)
+time_str = conn.recvline().decode().strip()
+utc_time = datetime.strptime(time_str, "%a %b %d %H:%M:%S %Y") 
+    + timedelta(hours=offset)
+timestamp = int(datetime.timestamp(utc_time))
+```
+
+results:
+
+```text 
+[x] Connecting to pe111.comp.nus.edu.sg on port 22
+[+] Connecting to pe111.comp.nus.edu.sg on port 22: Done
+[*] yukna@pe111.comp.nus.edu.sg:
+    Distro    Ubuntu 20.04
+    OS:       linux
+    Arch:     amd64
+    Version:  5.4.0
+    ASLR:     [32mEnabled[m
+    SHSTK:    [31mDisabled[m
+    IBT:      [31mDisabled[m
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg: Done
+========================
+received Mon Feb 17 11:19:08 2025, trying offset of -24: 2025-02-16 11:19:08
+b'1\xa5\x11\xc9\nJ"Y;\x87\xe3\xe8\xb1\x94\xd5\xe9nd0m_4ft3r_4ll?}\n'
+Wrong!!
+
+[*] Closed remote connection to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH 
+    connection to pe111.comp.nus.edu.sg
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg: Done
+========================
+
+...
+
+========================
+received Mon Feb 17 11:19:08 2025, trying offset of 7: 2025-02-17 18:19:08
+b'\x95\xe8x#Z\xa0\xa1i\xf8\x97\xd0H\t8\x19\xd4nd0m_4ft3r_4ll?}\n'
+Wrong!!
+
+[*] Closed remote connection to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH 
+    connection to pe111.comp.nus.edu.sg
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg: Done
+========================
+received Mon Feb 17 11:19:08 2025, trying offset of 8: 2025-02-17 19:19:08
+CS2107{n0t_s0_r4nd0m_4ft3r_4ll?}
+
+No way, how did you get my flag!?
+[*] Closed remote connection to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH 
+    connection to pe111.comp.nus.edu.sg
+[x] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg
+[+] Connecting to cs2107-ctfd-i.comp.nus.edu.sg:13337 via SSH to pe111.comp.
+    nus.edu.sg: Done
+========================
+received Mon Feb 17 11:19:08 2025, trying offset of 9: 2025-02-17 20:19:08
+
+....
+```
+
+wonderful. I should have guessed it was 8h difference. But we can't always be sure. 
+
+Key: `CS2107{n0t_s0_r4nd0m_4ft3r_4ll?}`
+
