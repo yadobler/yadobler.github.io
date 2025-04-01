@@ -9,6 +9,13 @@
         "draft": true
     },
     {
+        "title": "Chinese Script Highlighter",
+        "description": "A quickly-put-together website to help me (and my classmates) highlight new words that are not part of the syllabus, which is required for our LAC3202 presentation.",
+        "link": "/chinese_word_highlighter",
+        "heroImage": "@assets/showcase/chinese_highlighter.jpg",
+        "pubDate": "2025-04-31"
+    },
+    {
         "title": "Main Website",
         "description": "This site is also a way for me to learn static site generation and JSX frameworks!",
         "link": "https://www.github.com/yadobler/yadobler.github.io",
