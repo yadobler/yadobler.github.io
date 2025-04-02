@@ -10,10 +10,10 @@
     },
     {
         "title": "Chinese Script Highlighter",
-        "description": "A quickly-put-together website to help me (and my classmates) highlight new words that are not part of the syllabus, which is required for our LAC3202 presentation.",
+        "description": "A quickly-put-together website to help me (and my classmates) highlight new words that are not part of the syllabus, and automatically compile new the new words with meanings and pronunciations. Required for our LAC3202 presentation.",
         "link": "/chinese_word_highligher",
         "heroImage": "@assets/showcase/chinese_highlighter.jpg",
-        "pubDate": "2025-04-31"
+        "pubDate": "2025-04-02"
     },
     {
         "title": "Main Website",
