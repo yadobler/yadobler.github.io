@@ -9,6 +9,13 @@
         "draft": true
     },
     {
+        "title": "Wallpaper Base16 Converter",
+        "description": "Converts a wallpaper into a base16-palette 4-bit variant wallpaper",
+        "link": "https://github.com/yadobler/wallpaper_base16_converter",
+        "heroImage": "@assets/showcase/wallpaper_base16_converter.png",
+        "pubDate": "2025-04-24"
+    },
+    {
         "title": "Tamil Dictionary",
         "description": "A fun little infomation-retrieval test and 'Pleco'-style dictionary app.",
         "link": "https://github.com/yadobler/TamilDictionary",
