@@ -9,6 +9,13 @@
         "draft": true
     },
     {
+        "title": "Tamil Dictionary 2",
+        "description": "A better fun little infomation-retrieval test and 'Pleco'-style dictionary app.",
+        "link": "https://github.com/yadobler/tamil_dictionary_2",
+        "heroImage": "@assets/showcase/tamil_dictionary_2.png",
+        "pubDate": "2025-04-29"
+    },
+    {
         "title": "Wallpaper Base16 Converter",
         "description": "Converts a wallpaper into a base16-palette 4-bit variant wallpaper",
         "link": "https://github.com/yadobler/wallpaper_base16_converter",
