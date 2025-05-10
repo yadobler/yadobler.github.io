@@ -9,6 +9,14 @@ export default defineConfig({
     site: 'https://yadobler.github.io/',
     trailingSlash: "never",
     integrations: [embeds(), mdx(), tailwind()],
+    markdown: {
+        shikiConfig: {
+            themes: {
+                light: 'github-light',
+                dark: 'github-dark',
+            },
+        },
+    },
     css: {
         global: true,
     },
