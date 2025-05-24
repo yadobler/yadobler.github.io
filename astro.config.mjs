@@ -13,7 +13,7 @@ import manPageGrammar from '.grammars/man.json' assert { type: 'json' };
 // https://astro.build/config
 export default defineConfig({
     site: 'https://yadobler.github.io/',
-    trailingSlash: "never",
+    trailingSlash: "ignore",
     integrations: [embeds(), mdx(), tailwind()],
     markdown: {
         shikiConfig: {
