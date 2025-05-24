@@ -71,6 +71,10 @@ const indicator = p => (currentPath === p.href ? "bg-gradient-to-r from-blue-500
         const menuOpen = document.querySelector("#menu-open");
         const menuClose = document.querySelector("#menu-close");
         const mobileMenu = document.querySelector("#mobile-menu");
+        if (menuToggle == null) return
+        if (mobileMenu == null) return
+        if (menuClose == null) return
+        if (menuOpen == null) return
 
         menuToggle.addEventListener("click", () => {
             const isMenuVisible = !mobileMenu.classList.contains("hidden");

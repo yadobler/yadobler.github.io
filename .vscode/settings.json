@@ -1,4 +1,5 @@
 {
+    "css.customData": [".vscode/tailwind.json"],
     "cSpell.words": [
         "Abugida",
         "Baybayin",
@@ -11,8 +12,13 @@
         "Jyutping",
         "Kawi",
         "Lanna",
+        "nasm",
+        "navmenu",
         "Pallava",
+        "roff",
+        "shiki",
         "unlist",
+        "Yadobler",
         "Yukna",
         "இருக்க",
         "இருக்கட்டும்",

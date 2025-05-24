@@ -4,54 +4,106 @@
 
 
 @layer base {
-    /* General text styles */
-    p, li {
-        @apply text-primary-fg-light dark:text-primary-fg-dark text-lg leading-relaxed;
+    body {
+        @apply bg-primary-bg-light dark:bg-primary-bg-dark text-primary-fg-light dark:text-primary-fg-dark;
+    }
+
+    p {
+        @apply text-primary-fg-light dark:text-primary-fg-dark text-base leading-relaxed mb-4 p-2; 
     }
 
     b {
-        @apply text-bold-light dark:text-bold-dark
+        @apply text-bold-light dark:text-bold-dark;
     }
     
-    code {
-        @apply text-code-light dark:text-code-dark
+    strong { 
+        @apply text-bold-light dark:text-bold-dark;
+    }
+
+    :not(pre) > code { /* Target `code` tags NOT directly inside a `pre` tag */
+        @apply text-code-light dark:text-code-dark font-mono text-sm px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-700; 
+    }
+
+    pre {
+        @apply font-mono text-sm p-4 rounded-lg overflow-x-auto my-6; /* Add padding, rounding, overflow, margins */
     }
 
     a {
         @apply text-link-light hover:text-hover-light no-underline dark:text-link-dark dark:hover:text-hover-dark;
     }
 
-    /* Heading styles */
-    h1, h2, h3, h4 {
-        @apply font-medium text-center rounded-xl shadow-md px-5;
-    }
-
-    h1 {
-        @apply text-4xl py-4 bg-secondary-bg-light dark:bg-secondary-bg-dark text-secondary-fg-light dark:text-secondary-fg-dark;
-    }
-
-    h2 {
-        @apply text-3xl py-3 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
-    }
-
-    h3 {
-        @apply text-2xl py-2 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
-    }
-    
-    h4 {
-        @apply text-xl py-1 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
-    }
-
-    /* List and image styles */
+    /* List styles */
     ul {
-        @apply list-disc pl-6 m-4;
+        @apply list-disc pl-6 ml-4 mb-4; /* Default list-disc, padding, margin-left, margin-bottom */
+    }
+
+    ol { /* Add ordered list styles */
+        @apply list-decimal pl-6 ml-4 mb-4;
     }
 
     li {
-        @apply mb-2;
+        @apply mb-2; /* Margin bottom for list items */
     }
 
+    /* Ensure paragraphs/other block elements inside list items don't add extra margin */
+    li p {
+        @apply mt-0 mb-0;
+    }
+
+    h1, h2, h3, h4 {
+        @apply font-medium text-center rounded-xl shadow-md px-5 my-5;
+    }
+
+    h1 {
+        @apply text-4lg py-4 bg-secondary-bg-light dark:bg-secondary-bg-dark text-secondary-fg-light dark:text-secondary-fg-dark;
+    }
+
+    h2 {
+        @apply text-3lg py-3 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
+    }
+
+    h3 {
+        @apply text-2lg py-2 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-secondary-fg-light dark:text-secondary-fg-dark;
+    }
+    
+    h4 {
+        @apply text-lg py-1 bg-tertiary-bg-light dark:bg-tertiary-bg-dark text-tertiary-fg-light dark:text-tertiary-fg-dark;
+    }
+
+    /* Image styles */
     img {
-        @apply shadow-md rounded-lg max-w-full;
+        @apply shadow-md rounded-lg max-w-full h-auto my-4;
+    }
+
+    table {
+        @apply w-full my-4; /* w-full, border-collapse, margin-top/bottom */
+    }
+
+    th, td {
+        @apply border border-gray-300 dark:border-gray-600 border-collapse p-2 align-top font-normal text-left; /* padding, no borders, align-top, no bold for th, left align */
+    }
+    
+    th {
+        @apply text-bold-light dark:text-bold-dark; /* Explicitly set text color */
+    }
+    
+    td {
+        @apply text-primary-fg-light dark:text-primary-fg-dark; /* Explicitly set text color */
+    }
+
+
+    /* Ensure p and li inside table cells don't add extra margin */
+    th p, td p, th li, td li {
+        @apply mt-0 mb-0;
+    }
+
+    /* Blockquote styles (often present in prose, add if needed) */
+    blockquote {
+        @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300 my-4;
+    }
+
+    /* Horizontal Rule (hr) styles (often present in prose, add if needed) */
+    hr {
+        @apply border-t border-gray-200 dark:border-gray-700 my-8;
     }
 }

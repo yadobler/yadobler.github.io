@@ -19,27 +19,35 @@ const { title, author, pubDate, modDate, heroImage, description, tags } = post.d
 ---
 
 <Layout title={title} description={description}>
-    <h1>{title}</h1>
+    <h1>{title}</h1> 
     <div class="grid grid-rows-2 justify-around">
         <div class="grow text-center">
             <p>
-            By: {author} on <FormattedDate date={pubDate} />
-            {modDate && (
-            <span class="not-prose"> 
-                ( Updated: <FormattedDate date={modDate} />)
-            </span>
-            )}
+                By: {author} on <FormattedDate date={pubDate} />
+                {modDate && (
+                    <span> 
+                        ( Updated: <FormattedDate date={modDate} />)
+                    </span>
+                )}
             </p>
         </div>
         <div class="flex flex-row flex-wrap justify-center gap-2">
-            {tags.map((t: String) => (
-            <span class="bg-red-100 shadow-md rounded-xl p-2 h-fit">{t}</span>
+            {tags.map((t: string) => (
+                <span class="bg-red-100 text-black shadow-md rounded-xl p-2 h-fit">{t}</span>
             ))}
         </div>
     </div>
 
     <div class="flex flex-col justify-center">
-        <div> {heroImage && <Image src={heroImage} alt={description} class="shadow:md w-full" />} </div>
-        <div class="px-5"> <Content /> </div>
+        <div> 
+            {heroImage && (
+                <Image 
+                    src={heroImage} 
+                    alt={description} 
+                    class="shadow-md rounded-lg w-full" 
+                />
+            )} 
+        </div>
+        <div> <Content /> </div>
     </div>
 </Layout>
