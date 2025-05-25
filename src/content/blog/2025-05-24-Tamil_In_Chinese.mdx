@@ -1,0 +1,277 @@
+---
+title: "Writing Tamil with Chinese Characters"
+author: "Yukna"
+pubDate: 2025-05-25
+modDate: 2025-05-25
+heroImage: "../../assets/tamil_in_chinese.png"
+description: "Writing Tamil with Chinese Characters like how Japan and Korea imported Middle Chinese Characters."
+tags: 
+    - Tamil
+    - Chinese
+    - Languages
+    - Linguistics
+    - Orthography
+unlist: False
+draft: False
+---
+
+import Furigana from "@components/Furigana.astro";
+
+## Before you begin...
+
+> 自他之犬同唗屋向走已自
+
+What!? Hint: *It's in Tamil!*
+
+## Tamil Script
+
+Tamil is written with an [Abugida](https://en.wikipedia.org/wiki/Tamil_script) where consonants represent syllables with vowels appearing as modifications to the base consonant glyph. It is an evolution to the old Tamil Brahmi and [Pallava Script](https://en.wikipedia.org/wiki/Pallava_script) which gave rise to the Balinese, Baybayin, Javanese, Kawi, Khmer, Lanna, Lao, Mon-Burmese, New Tai Lue, Sundanese, and Thai scripts! However, I always felt that the modern Tamil Script evolved to be not as nice and uniform as its cousin scripts (**controversial take!!!!** Don't tell anyone I said this). 
+
+
+## If Tamil Used Chinese Characters...
+
+Absurd! This is what Japan did, and Kanji is often regarded as the pain point for learning Japanese. Like Japanese, Tamil is very [agglutinative](https://en.wikipedia.org/wiki/Agglutinative_language) - verbs and nouns change and grow in suffixes when it assumes different grammatical functions like tense and mood. This is in contrast to Chinese, which is [analytical](https://en.wikipedia.org/wiki/Analytic_language) across all its dialects - separate distinct morphemes and word order denote grammatical functions.
+
+However, both [Japanese](https://en.wikipedia.org/wiki/Kanji#History) and [Korean](https://en.wikipedia.org/wiki/Hanja#History) managed to wrestle the Chinese characters to suit their agglutinative structures. Today, Japanese adopts a mix of Kanji characters and two [syllabaries](https://en.wikipedia.org/wiki/Hiragana), while Korean has a revolutionary [alphabet](https://en.wikipedia.org/wiki/Hangul) system that describes the consonants and vowel sounds. 
+
+I am going to undo this, and strictly force every morpheme of every tamil word into an appropriate Chinese character.
+
+## Root Nouns and Verbs
+
+These words directly get assigned to a single character that will correspond to what they mean
+
+### Numbers
+
+The easiest? Not really! Tamil numbers can come as its own word, or as a prefix. Also, `nine` and `nineteen` are what would be expected. However, `ninety` onwards, Tamil encodes these as `1-less-than-`. So `1999` is `Thousand less-thousand, less-hundred, nine`. Being the crazy person I am, I encoded ninety not as `nine-ten` (九十) but as `down-hundred` (下百).
+
+|Meaning|Tamil|Character|Transliteration|
+|-|-|-|-|
+|One|ஒரு / ஓர் / ஓ-|一|oɾɯ / oːɾ / oː-|
+|Two|இரண்டு / ஈர் / இரு-|二|iɾɜɳɖɯ / iːɾ- / iɾu-|
+|Three|மூன்று / மூ-|三| muːndrɯ / muː- |
+|Four|நாங்கு / நா-|四|n̪aːŋgɯ / n̪aː-|
+|Five|ஐந்து / ஐ-|五|aɪn̪dɯ / aɪ-|
+|Six|ஆறு|六|aːrɯ|
+|Seven|ஏழு|七|eːɻɯ|
+|Eight|எட்டு / எம்-|八|eʈːɯ / em-|
+|Nine|ஒன்பது / தொம்-|九|ombɜdɯ / t̪om-|
+|Ten|பத்து / -பது / பதி-|十|pat̪ːɯ / -padɯ / padi-|
+|Eleven|பதினொரு|十一|padinoɾɯ|
+|Twelve|பதிரண்டு / பணண்து|十二| padiɾɜɳɖɯ / paɳaɳdɯ|
+|Thirteen|பதிமூன்று|十三|padimuːndrɯ|
+|Fourteen|பதினாங்கு|十四|padi̪naːŋgɯ|
+|Fifteen|பதினைந்து|十五|padinaɪn̪dɯ|
+|Sixteen|பதினாறு|十六|padinaːrɯ|
+|Seventeen|பதினேழு|十七|padineːɻɯ|
+|Eighteen|பதினெட்டு|十八|padineʈːɯ|
+|Nineteen|பத்தோம்பது|十九|padːoːmbadɯ|
+|Twenty|இருபது|二十|iɾubadɯ|
+|Thirty|முப்பது|三十|muːpːdɯ|
+|Eighty|எண்பது|八十|embadɯ|
+|Ninety|தொன்னுறு|下百|t̪onːnːɯ|
+|Hundred|நூறு|百|nːɯ|
+|Two hundred|இருனுறு|二百|iɾunːɯ|
+|Nine hundred|தொல்லாயிரம்|下千|t̪olːaːjiɾɜm|
+|Thousand|ஆயிரம்|千|aːjiɾɜm|
+
+### Nouns
+
+These are some simple nouns. These words also provide the basis of syllable characters. The sound for ஆ (aa) can be derived from ஆடு (aadu, goat) by adding a 口 (vaai, mouth) to 羊 (aadu, goat) to get 咩 (aa).
+
+|Meaning|Tamil|Character|Transliteration|
+|-|-|-|-|
+|Inch|அலங்கு|寸|alɜŋgɯ|
+|Goat|ஆடு|羊|aːɖɯ|
+|Dog|நாய்|犬|n̪aːj|
+|Fire|தீ|火|t̪iː|
+|Water|நீர்|水|n̪iːɾ|
+|Mouth|வாய்|口|ʋaːj|
+|Person|ஆல்|人|aːl|
+|Hand|கை|手|kaɪ|
+
+
+### Verbs
+
+These are the infinitive root words. I only have two here. I am lazy.
+
+|Meaning|Tamil|Character|Transliteration|
+|-|-|-|-|
+|Come|வா|来|ʋaː|
+|Run|ஓடு|走|oːɖɯ|
+
+### Pronouns
+
+|Meaning|Tamil|Character|Transliteration|
+|-|-|-|-|
+|I / me|நான்|自|n̪aːn|
+|You|நீ|尔|n̪iː|
+|He|அவன்|他|aʋɜn|
+|She|அவள்|她|aʋɜl|
+|He (Respectful)|அவர்|贵|aʋɜɾ|
+|That|அது|物|adɯ|
+|We (exclusive)|நாங்கள்|自众|n̪aːŋgɜl|
+|We (inclusive)|நாம்|咱|n̪aːm|
+|You (Plural / Respectful)|நீங்கள்|君|n̪iːŋgɜl|
+|They|அவ்ர்கள்|众|aʋɜɾkɜl|
+|Those|அவை|些|aʋɜɪ|
+
+## Noun conjugations
+
+Unlike Chinese and English, word positions do not matter as much in Tamil. Instead, the "who" and "what" in "who does what" is marked by suffixes. The default "who does" agent is unmarked, and verbs will also get suffixes to agree with this word. The rest are marked according to what they do. In Japanese, these are reduced from Kanji to hiragana, like "-o" and "-no". This will be a future extension where I will reduce certain characters down to simple strokes to create a brand new writing system.
+
+|Meaning|Tamil|Character|Transliteration|
+|-|-|-|-|
+|ACC|-ஐ|受|-ɜɪ|
+|INS|-ஆல்|以|-aːl|
+|SOC1|-உடன்|同|-uɖɜn|
+|SOC2|-ஓடு|同唗|ɯ|-oːɖɯ|
+|DAT|-கு|向|-kɯ|
+|BEN|-காக|利|-kaːgɜ|
+|ABL irrational|-இலிருந்து|里从|-iliɾɯndɯ|
+|ABL rational|-இடமிருந்து|于从|-iɖɜmiɾɯndɯ|
+|GEN|-அது|之寸|ɯ|-adɯ|
+|GEN|-உடைய|之|-ɯɖɜɪ|
+|LOC irrational|-இல்|里|-il|
+|LOC rational|-இடம்|于|-iɖɜm|
+|VOC|-ஆ|咩|-aː|
+|VOC|-ஏ|叱|-eː|
+|VOC|-ஓ|唗|-oː|
+|CONJ|-உம்|与|-ɯm|
+
+The interesting ones are:
+
+1. 咩 uses the *goat* character like mentioned above for the *aː* sound.
+2. Likewise 叱 uses *seven* for the *eː* initial sound.
+3. And 唗 uses *run* for the *oː* initial sound.
+4. We see "唗" for the suffix "同唗" because of how the suffix *-ஓடு* sounds exactly like the verb "run" *ஓடு*. 
+
+This plays on the tendency of Chinese character evolution to use phonetic radicals as clues to pronunciation. 
+
+## Verb conjugations
+
+This is the crazy part. There are multiple 
+
+|Meaning|Tamil|Character|Transliteration|
+|-|-|-|-|
+|EFFECTIVE|-ப்படு-|被|-pːɜɖɯ-|
+|PROG|-க்கொண்டிரு-|正|-kːoɳɖiɾɯ-|
+|FUTURE NEG|-மாட்ட-|非|-maːɖːɜ-|
+|1SG|-ஏன்|自|-eːn|
+|2SG|-ஆய்|尔|-aːj|
+|3SG(M)|-ஆன்|他|-aːn|
+|3SG(F)|-ஆள்|她|-aːl|
+|3SG(H)|-ஆர்|贵|-aːɾ|
+|3SG(I)|-அது|物|-adɯ|
+|1PL|-ஓம்|咱|-oːm|
+|2PL|-ஈர்கள்|君|-iːɾgɜl|
+|3PL|-ஆர்கள்|众|-aːɾgɜl|
+|3PL(I)|-அன|些|-ɜn|
+|PRESENT|-உகிற-|今|-ukirɜ-|
+|PAST|-இன-|已|-inɜ-|
+|FUTURE|-உவ-|将|-uʋɜ-|
+|NEG|-இல்லை|无|-ilːɜi|
+|IMP SG|-உ|𠲖|-ɯ|
+|IMP PL|-உங்கள்|君|-uŋgɜl|
+|IMP NEG SG|-ஆது|不叱|-aːdɯ|
+|POTENTIAL|-அலாம்|可|-ɜlaːm|
+|COHORTATIVE|-அட்டும்|准|-ɜɖːɯm|
+|CAUSAL COND|-உவதால்|因|-uʋɜdaːl|
+|COND|-இனால்|若|-inaːl|
+
+### Cursed table of conjugations for 走 (ஓடு)
+
+This table dictates most of the possible conjugations for the verb run (<Furigana combine="True" hanzi="走" jyutping="ஓடு"/>)
+
+|root verb: 走|present 今|past 已|future 将|future neg 非|neg 无|
+|:----------:|:--------:|:----:|:-------:|:----------------:|:--------:|
+|1SG 自|<Furigana combine="True" hanzi="走今自" jyutping="ஓடுகிறேன்" />|<Furigana combine="True" hanzi="走已自" jyutping="ஓடினேன்" />|<Furigana combine="True" hanzi="走将自" jyutping="ஓடுவேன்" />|<Furigana combine="True" hanzi="走非自" jyutping="ஓடமாட்டேன்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|2SG 尔|<Furigana combine="True" hanzi="走今尔" jyutping="ஓடுகிறாய்" />|<Furigana combine="True" hanzi="走已尔" jyutping="ஓடினாய்" />|<Furigana combine="True" hanzi="走将尔" jyutping="ஓடுவாய்" />|<Furigana combine="True" hanzi="走非尔" jyutping="ஓடமாட்டாய்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|3SG(M) 他|<Furigana combine="True" hanzi="走今他" jyutping="ஓடுகிறான்" />|<Furigana combine="True" hanzi="走已他" jyutping="ஓடினான்" />|<Furigana combine="True" hanzi="走将他" jyutping="ஓடுவான்" />|<Furigana combine="True" hanzi="走非他" jyutping="ஓடமாட்டான்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|3SG(F) 她|<Furigana combine="True" hanzi="走今她" jyutping="ஓடுகிறாள்" />|<Furigana combine="True" hanzi="走已她" jyutping="ஓடினாள்" />|<Furigana combine="True" hanzi="走将她" jyutping="ஓடுவாள்" />|<Furigana combine="True" hanzi="走非她" jyutping="ஓடமாட்டாள்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|3SG(H) 贵|<Furigana combine="True" hanzi="走今贵" jyutping="ஓடுகிறார்" />|<Furigana combine="True" hanzi="走已贵" jyutping="ஓடினார்" />|<Furigana combine="True" hanzi="走将贵" jyutping="ஓடுவார்" />|<Furigana combine="True" hanzi="走非贵" jyutping="ஓடமாட்டார்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|3SG(I) 物|<Furigana combine="True" hanzi="走今物" jyutping="ஓடுகிறது" />|<Furigana combine="True" hanzi="走已物" jyutping="ஓடினது" />|<Furigana combine="True" hanzi="走将" jyutping="ஓடும்" />|<Furigana combine="True" hanzi="走不物" jyutping="ஓடாது" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|1PL 咱|<Furigana combine="True" hanzi="走今咱" jyutping="ஓடுகிறோம்" />|<Furigana combine="True" hanzi="走已咱" jyutping="ஓடினோம்" />|<Furigana combine="True" hanzi="走将咱" jyutping="ஓடுவோம்" />|<Furigana combine="True" hanzi="走非咱" jyutping="ஓடமாட்டோம்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|2PL 君|<Furigana combine="True" hanzi="走今君" jyutping="ஓடுகிறீர்கள்" />|<Furigana combine="True" hanzi="走已君" jyutping="ஓடினீர்கள்" />|<Furigana combine="True" hanzi="走将君" jyutping="ஓடுவீர்கள்" />|<Furigana combine="True" hanzi="走非君" jyutping="ஓடமாட்டீர்கள்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|3PL 众|<Furigana combine="True" hanzi="走今众" jyutping="ஓடுகிறார்கள்" />|<Furigana combine="True" hanzi="走已众" jyutping="ஓடினார்கள்" />|<Furigana combine="True" hanzi="走将众" jyutping="ஓடுவார்கள்" />|<Furigana combine="True" hanzi="走非众" jyutping="ஓடமாட்டார்கள்" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+|3PL(I) 些|<Furigana combine="True" hanzi="走今些" jyutping="ஓடுகின்றன" />|<Furigana combine="True" hanzi="走已些" jyutping="ஓடினன" />|<Furigana combine="True" hanzi="走将些" jyutping="ஓடுவன" />|<Furigana combine="True" hanzi="走不" jyutping="ஓடா" />|<Furigana combine="True" hanzi="走无" jyutping="ஓடவில்லை" />||
+
+
+|root verb: 走|present 今|past 已|future 将|future neg 非|
+|:----------:|:--------:|:----:|:-------:|:----------------:|
+|imperative SG|<Furigana combine="True" hanzi="走𠲖" jyutping="ஓடு" />|||<Furigana combine="True" hanzi="走不叱" jyutping="ஓடாதே" />||
+|imperative PL|<Furigana combine="True" hanzi="走君" jyutping="ஓடுங்கள்" />|||<Furigana combine="True" hanzi="走不君" jyutping="ஓடாதீர்கள்" />||
+|infinitive|<Furigana combine="True" hanzi="走" jyutping="ஓட" />|||<Furigana combine="True" hanzi="走末是" jyutping="ஓடாமல் இருக்க" />||
+|potential 可|<Furigana combine="True" hanzi="走可" jyutping="ஓடலாம்" />|||<Furigana combine="True" hanzi="走末是可" jyutping="ஓடாமல் இருக்கலாம்" />||
+|cohortative 准|<Furigana combine="True" hanzi="走准" jyutping="ஓடட்டும்" />|||<Furigana combine="True" hanzi="走末是准" jyutping="ஓடாமல் இருக்கட்டும்" />||
+|casual cond. 因|<Furigana combine="True" hanzi="走因" jyutping="ஓடுவதால்" />|||<Furigana combine="True" hanzi="走不因" jyutping="ஓடாததால்" />||
+|cond. 若|<Furigana combine="True" hanzi="走若" jyutping="ஓடினால்" />|||<Furigana combine="True" hanzi="走不若" jyutping="ஓடாவிட்டால்" />||
+|adverbial participle|<Furigana combine="True" hanzi="走" jyutping="ஓடி" />|||<Furigana combine="True" hanzi="走末" jyutping="ஓடாமல்" />||
+|adjectival participle 形|<Furigana combine="True" hanzi="走今形" jyutping="ஓடுகிற" />|<Furigana combine="True" hanzi="走已形" jyutping="ஓடின" />|<Furigana combine="True" hanzi="走将形" jyutping="ஓடும்" />|<Furigana combine="True" hanzi="走不形" jyutping="ஓடாத" />||
+|V. noun 3SG(M) 者他|<Furigana combine="True" hanzi="走今者他" jyutping="ஓடுகிறவன்" />|<Furigana combine="True" hanzi="走已者他" jyutping="ஓடினவன்" />|<Furigana combine="True" hanzi="走将者他" jyutping="ஓடுபவன்" />|<Furigana combine="True" hanzi="走不者他" jyutping="ஓடாதவன்" />||
+|V. noun 3SG(F) 者她|<Furigana combine="True" hanzi="走今者她" jyutping="ஓடுகிறவள்" />|<Furigana combine="True" hanzi="走已者她" jyutping="ஓடினவள்" />|<Furigana combine="True" hanzi="走将者她" jyutping="ஓடுபவள்" />|<Furigana combine="True" hanzi="走不者她" jyutping="ஓடாதவள்" />||
+|V. noun 3SG(H) 者贵|<Furigana combine="True" hanzi="走今者贵" jyutping="ஓடுகிறவர்" />|<Furigana combine="True" hanzi="走已者贵" jyutping="ஓடினவர்" />|<Furigana combine="True" hanzi="走将者贵" jyutping="ஓடுபவர்" />|<Furigana combine="True" hanzi="走不者贵" jyutping="ஓடாதவர்" />||
+|V. noun 3SG(I) 者物|<Furigana combine="True" hanzi="走今者物" jyutping="ஓடுகிறது" />|<Furigana combine="True" hanzi="走已者物" jyutping="ஓடினது" />|<Furigana combine="True" hanzi="走将者物" jyutping="ஓடுவது" />|<Furigana combine="True" hanzi="走不者物" jyutping="ஓடாதது" />||
+|V. noun 3PL 者众|<Furigana combine="True" hanzi="走今者众" jyutping="ஓடுகிறவர்கள்" />|<Furigana combine="True" hanzi="走已者众" jyutping="ஓடினவர்கள்" />|<Furigana combine="True" hanzi="走将者众" jyutping="ஓடுபவர்கள்" />|<Furigana combine="True" hanzi="走不者众" jyutping="ஓடாதவர்கள்" />||
+|V. noun 3PL(I) 者些|<Furigana combine="True" hanzi="走今者些" jyutping="ஓடுகிறவை" />|<Furigana combine="True" hanzi="走已者些" jyutping="ஓடினவை" />|<Furigana combine="True" hanzi="走将者些" jyutping="ஓடுபவை" />|<Furigana combine="True" hanzi="走不者些" jyutping="ஓடாதவை" />||
+|Gerund I|<Furigana combine="True" hanzi="走" jyutping="ஓடுவது" />|||||
+|Gerund II|<Furigana combine="True" hanzi="走" jyutping="ஓடுதல்" />|||||
+|Gerund III|<Furigana combine="True" hanzi="走" jyutping="ஓடல்" />|||||
+
+## Putting it all together
+
+Let's try to analyze what I said at the start:
+
+> 自他之犬同唗屋向走已自
+
+|Word|Meaning|
+|:-:|-|
+|<Furigana combine="True" hanzi="自" jyutping="நான்"/>|I|
+|<Furigana combine="True" hanzi="他之" jyutping="அவனுடைய"/>|He-GEN (His)|
+|<Furigana combine="True" hanzi="犬同唗" jyutping="நாயோடு"/>|Dog-SOC2 (with dog)|
+|<Furigana combine="True" hanzi="屋向" jyutping="விட்டிற்கு"/>|House-DAT (to house)|
+|<Furigana combine="True" hanzi="走已自" jyutping="ஓடினேன்."/>|Run-PAST-1SG (I ran)|
+
+In other words:
+
+> I ran home with his dog.
+
+There's two things here I want to add:
+1. I did not run home with anyone's dog.
+2. House is represented with '屋'. 
+
+More complex words can be used to demonstrate the cursed nature of this orthography:
+
+> ஓடாதவர்களுக்காகவே - oːɖaːdɜʋɜɾgɜlukːaːgɜʋeː
+
+Google translator says it means *"For those who don't run"* but I think a better translations is:
+
+> Indeed for those who do not run
+
+and in our orthography it is:
+
+> 走不者众利叱
+
+In Tamil it is one word, a noun. It can be broken nicely according to each character:
+
+|Character|Tamil|IPA|Meaning|
+|-|-|-|-|
+|走|ஓட்|oːɖ|Run|
+|不|ஆட்|aːd|Negation|
+|者|அவ்|ɜʋ|Verb-to-noun|
+|众|அர்கள்|ɜɾgɜl|Third person plural|
+|利|உக்காக|ukːaːgɜ|Beneficial|
+|叱|வே|ʋeː|Vocative|
+
+An interesting observation is that elements like *உக்* (uk) are not explicitly listed in the tables above, yet they appear due to Tamil [phonotactic](https://en.wikipedia.org/wiki/Phonotactics) constraints. This nuance is not currently captured in our new orthography, which could pose challenges for literacy acquisition.
+
+This touches on the often-debated topic of **whole-word vs. phonetic reading**. Ideally, encountering a phrase like *走不者众利叱* would instantly evoke the meaning “Indeed, for those who do not run,” akin to whole-word recognition. This ability explains why many readers can effortlessly skim familiar words or even decipher jumbled texts like those viral Facebook memes where the internal letters of words are scrambled but still legible.
+
+English, by and large, is not very phonetic - take the classic example of [*ghoti*](https://en.wikipedia.org/wiki/Ghoti), which humorously spells “fish.” (Fun fact: *Kiribati* is pronounced *Kiribaz*.) Despite this, humans primarily acquire language through listening and speaking, making the **sight-to-sound** pathway critical in early reading development. Only later does the **sight-to-meaning** pathway become dominant.
+
+This is why phonetic transparency matters: studies show that Italian speakers, whose language is more phonetically regular, are less likely to develop dyslexia compared to English speakers. Dyslexia is believed to stem from difficulties in the sight-to-sound mapping process; thus, a phonetic language can mitigate these issues. With practice, readers of phonetic scripts can also transition into whole-word recognition—just like in logographic systems.
+
+(*Source is Google ehehe nice thing about blog is I don't need to explicitly cite sources, but feel free to raise an issue via my contact-me*)
+
+## Conclusion
+
+I want to work further on this, maybe next time work on reinventing a new syllabary based on this! There's still a lot of words I did not translate, having only worked on the grammar. Maybe writing out a song in Chinese Characters would be crazy!
