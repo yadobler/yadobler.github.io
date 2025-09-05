@@ -53,6 +53,6 @@ export default defineConfig({
         global: true,
     },
     experimental: {
-        svg: true,
+        // svg: true,
     }
 });
