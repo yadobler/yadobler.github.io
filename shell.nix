@@ -3,7 +3,7 @@ pkgs.mkShell {
   packages = with pkgs; [
     nodejs_24
     npm-check-updates
-    bootstrap-studio
+    # bootstrap-studio
   ];
 
   NODE_OPTIONS = "--no-deprecation";
