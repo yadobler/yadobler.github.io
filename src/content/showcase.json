@@ -9,6 +9,20 @@
         "draft": true
     },
     {
+        "title": "Labvis",
+        "description": "Lab space visualisation project for National University of Singapore vice-deans to visualise space seating distributions. (private repo)",
+        "link": "https://github.com/yadobler/labvis",
+        "heroImage": "@assets/showcase/labvis.png",
+        "pubDate": "2026-01-01"
+    },
+    {
+        "title": "Picamera RP Lidar",
+        "description": "Small little research for feasibility of collating data from a simple lidar and rgb camera setup, together with my professor.",
+        "link": "https://github.com/yadobler/RPLidar_Picam2_SLAM",
+        "heroImage": "@assets/showcase/lidar.jpg",
+        "pubDate": "2025-06-28"
+    },
+    {
         "title": "Tamil Dictionary 2",
         "description": "A better fun little infomation-retrieval test and 'Pleco'-style dictionary app.",
         "link": "https://github.com/yadobler/tamil_dictionary_2",
