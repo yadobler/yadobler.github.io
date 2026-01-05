@@ -26,9 +26,6 @@ jobs:
           package-manager: pnpm@10.24.0 # The Node package manager that should be used to install dependencies and build your site. Automatically detected based on your lockfile. (optional)
           node-version: 24.11.1 # The specific version of Node that should be used to build your site. Defaults to 20. (optional)
         # path: . # The root location of your Astro project inside the repository. (optional)
-        env:
-          PNPM_SHAMEFULLY_HOIST: true
-          PNPM_NODE_LINKER: hoisted
 
   deploy:
     needs: build
