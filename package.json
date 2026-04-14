@@ -23,5 +23,8 @@
         "debug": "4.3.7",
         "ansi-styles": "6.2.1",
         "supports-color": "9.4.0"
+    },
+    "devDependencies": {
+        "baseline-browser-mapping": "^2.10.18"
     }
 }
