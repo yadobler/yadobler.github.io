@@ -10,9 +10,9 @@
     },
     {
         "title": "Labvis",
-        "description": "Lab space visualisation project for National University of Singapore vice-deans to visualise space seating distributions. (private repo)",
+        "description": "A reactive Svelte and CodeIgniter web application featuring dynamic SVG floorplans for real-time personnel and asset tracking.",
         "link": "https://github.com/yadobler/labvis",
-        "heroImage": "@assets/showcase/labvis.png",
+        "heroImage": "@assets/showcase/labvis.jpg",
         "pubDate": "2026-01-01"
     },
     {
