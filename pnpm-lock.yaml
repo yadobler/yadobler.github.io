@@ -23,9 +23,6 @@ importers:
       sharp:
         specifier: ^0.35.4
         version: 0.35.4
-      shiki:
-        specifier: ^4.4.3
-        version: 4.4.3
       tm-grammars:
         specifier: ^1.23.18
         version: 1.31.15
