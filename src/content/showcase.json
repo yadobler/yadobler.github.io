@@ -10,7 +10,7 @@
     },
     {
         "title": "Labvis",
-        "description": "A reactive Svelte and CodeIgniter web application featuring dynamic SVG floorplans for real-time personnel and asset tracking.",
+        "description": "A reactive Svelte and CodeIgniter web application featuring dynamic SVG floorplans for real-time personnel and asset tracking. (Private repo, redacted preview)",
         "link": "https://github.com/yadobler/labvis",
         "heroImage": "@assets/showcase/labvis.jpg",
         "pubDate": "2026-01-01"
