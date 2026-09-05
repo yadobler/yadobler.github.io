@@ -3,7 +3,6 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import tailwind from '@astrojs/tailwind';
 import embeds from 'astro-embed/integration';
-import { bundledLanguages } from 'shiki';
 
 import cGrammar from './.grammars/c.json' assert { type: 'json' };
 import nasmGrammar from './.grammars/nasm.json' assert { type: 'json' };
@@ -23,10 +22,6 @@ export default defineConfig({
                 dark: 'github-dark',
             },
             langs: [
-                // @ts-ignore
-                // Keep all bundled languages
-                ...Object.keys(bundledLanguages), 
-
                 // @ts-ignore
                 {
                     ...cGrammar, 
